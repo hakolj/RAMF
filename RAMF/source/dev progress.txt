@@ -1,0 +1,6 @@
+2021-9-14：
+开发计划：
+Q-learning相关：将对状态的离散功能迁移到Q-learning中。使memory pool中存放的状态为原始测量值。Q-learning决定动作和进行训练时再计算状态的离散区间
+数据结构：二维数组threshold，定义了每一个状态维度的分区阈值，如threshold[i][j]为第i个状态维度的第j个区间边界。threshold[i].size() = levels数量-1。
+
+连续流场相关：测试linux编译，考虑是否需要实现全部读进来再训练。

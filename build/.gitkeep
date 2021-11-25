@@ -1,0 +1,1 @@
+this directory is kept for building files, i.e. exe, lib, dll on windows, or .o, .s on linux. These files are too large to upload to github, so I don't track them in git.

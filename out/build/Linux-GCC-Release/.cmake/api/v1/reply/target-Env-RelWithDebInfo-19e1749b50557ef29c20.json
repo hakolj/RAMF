@@ -1,0 +1,247 @@
+{
+	"archive" : {},
+	"artifacts" : 
+	[
+		{
+			"path" : "RAMF/libEnv.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"RAMF/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 53,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 64,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 13,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 75,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 76,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 15,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -fopenmp -D_GLIBCXX_USE_CXX11_ABI=1 -O2 -g -DNDEBUG  "
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-D_GLIBCXX_USE_CXX11_ABI=1"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 4,
+					"path" : "/home/qjr/.vs/RAMF/bf4d3949-88d3-4f06-8b49-3935242c5f82/src/lib/eigen-3.3.9"
+				},
+				{
+					"backtrace" : 5,
+					"path" : "/mnt/disk2/qjr/torchlib-cpu-linux/libtorch/share/cmake/Torch/../../../include"
+				},
+				{
+					"backtrace" : 6,
+					"path" : "/mnt/disk2/qjr/torchlib-cpu-linux/libtorch/share/cmake/Torch/../../../include/torch/csrc/api/include"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/home/qjr/.vs/RAMF/bf4d3949-88d3-4f06-8b49-3935242c5f82/src/RAMF/source/include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "/home/qjr/.vs/RAMF/bf4d3949-88d3-4f06-8b49-3935242c5f82/src/RAMF/source"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/mnt/disk2/qjr/torchlib-cpu-linux/libtorch/include"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/mnt/disk2/qjr/torchlib-cpu-linux/libtorch/include/torch/csrc/api/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "PCH::@910f1cb23bdacf2fc796"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Other::@910f1cb23bdacf2fc796"
+		}
+	],
+	"id" : "Env::@910f1cb23bdacf2fc796",
+	"name" : "Env",
+	"nameOnDisk" : "libEnv.a",
+	"paths" : 
+	{
+		"build" : "RAMF",
+		"source" : "RAMF"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Environment.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/FlowFieldDataPool.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Geometry.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/HomoIsoTurb.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Interpolation.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/LoadedFlow.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Mesh.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Scalar.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Scla.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/TaylorGreenVortex.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "RAMF/source/Environment/Vctr.cpp",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}
