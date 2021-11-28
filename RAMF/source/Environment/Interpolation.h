@@ -25,6 +25,14 @@ public:
 	}
 
 	void interpCoef(double dx, double dy, double dz);
+	void interp3d_old(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info);
 	void interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info);
+
+	// calculate Lagrangian interpolation coefficient using local grid information
+	double Lag2Base(const int& iflag, const double xp, const double x0, const double x1, const double x2);
+
+	// calculate Lagrangian interpolation coefficients for three interp points using local grid information
+	//out: coeff
+	void Lag2Bases(const double xp, const double x0, const double x1, const double x2, double coeff[3]);
 };
 #endif // !INTERPOLATION_H

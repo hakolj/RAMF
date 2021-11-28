@@ -89,6 +89,15 @@ public:
 	};
 };
 
+
+// the index of the grid where the particle is
+// Nx = 7
+// 0    1    2    3    4    5    6    7
+// :----|----|----|----|----|----|----|----:
+//   0     1    2   3    4    5     6   7
+// if periodic: 0=6, 1=7
+// actual grid range: 1 to 6
+// 
 // a slightly different periodic geometry by qjr.
 class Geometry_prdXYZ : public Geometry
 {
@@ -109,17 +118,17 @@ public:
 		Geometry::InitIndices();
 
 		for (int i = 1; i <= Nx; i++) {
-			ima[i] = i == 1 ? Nx : i - 1;
-			ipa[i] = i == Nx ? 1 : i + 1;
+			ima[i] = i == 1 ? Nx - 1 : i - 1;
+			ipa[i] = i == Nx - 1 ? 1 : i + 1;
 		}
 		for (int j = 1; j <= Ny; j++) {
-			jma[j] = j == 1 ? Ny : j - 1;
-			jpa[j] = j == Ny ? 1 : j + 1;
+			jma[j] = j == 1 ? Ny - 1 : j - 1;
+			jpa[j] = j == Ny - 1 ? 1 : j + 1;
 		}
 
 		for (int k = 1; k <= Nz; k++) {
-			kma[k] = k == 1 ? Nz : k - 1;
-			kpa[k] = k == Nz ? 1 : k + 1;
+			kma[k] = k == 1 ? Nz - 1 : k - 1;
+			kpa[k] = k == Nz - 1 ? 1 : k + 1;
 		}
 	}
 

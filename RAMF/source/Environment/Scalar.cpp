@@ -222,9 +222,9 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz) const
 	//cout << *this << endl;
 
 #pragma omp parallel for
-	for (int j = 1; j <= Ny; j++) {
-		for (int k = 1; k <= Nz; k++) {
-			for (int i = 1; i <= Nx; i++) {
+	for (int j = 1; j <= Ny-1; j++) {
+		for (int k = 1; k <= Nz-1; k++) {
+			for (int i = 1; i <= Nx-1; i++) {
 				int im, jm, km;
 				ms.imx(i, j, k, im, jm, km);
 				int ip, jp, kp;

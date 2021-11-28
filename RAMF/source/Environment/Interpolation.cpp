@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Interpolation.h"
+//#include "LagrangianInterp.h"
 
 
-
-void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info) {
+void Lag2nd3D::interp3d_old(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info) {
 	int ic, jc, kc;
 	
 	double xp2, yp2, zp2;
@@ -13,20 +13,28 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 
 	int id[3], jd[3], kd[3]; // store i+-1,k+-1,j+-1
 
-	
+	// the index of the grid where the particle is
+	// Nx = 7
+	// 0    1    2    3    4    5    6    7
+	// :----|----|----|----|----|----|----|----:
+	//   0     1    2   3    4    5     6   7
+	// if periodic: 0=6, 1=7
+	// actual grid range: 1 to 6
 	ic = floor(pos[0] / dx) + 1;
 	jc = floor(pos[1] / dy) + 1;
 	kc = floor(pos[2] / dz) + 1;
 
-	if (ic == Nx + 1) ic = Nx;
-	if (jc == Ny + 1) jc = Ny;
-	if (kc == Nz + 1) kc = Nz;
+	//overflow check, deal with the right-most case
+	//2021-11-26 update: Nx -> Nx-1, because Nx=96 -> Nx=97
+	if (ic == Nx) ic = Nx-1;
+	if (jc == Ny) jc = Ny-1;
+	if (kc == Nz) kc = Nz-1;
 
-	// overflow check....
 
-	xp2 = pos[0] - (ic - 1) * dx - dx / 2;
-	yp2 = pos[1] - (jc - 1) * dy - dy / 2;
-	zp2 = pos[2] - (kc - 1) * dz - dz / 2;
+	//minus half length of a mesh because the data is stored at the center of mesh
+	xp2 = pos[0] - ((ic - 1) * dx + dx / 2);
+	yp2 = pos[1] - ((jc - 1) * dy + dy / 2);
+	zp2 = pos[2] - ((kc - 1) * dz + dz / 2);
 
 	double Qx = 0.0;
 	double Qy = 0.0;
@@ -62,6 +70,130 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 
 
 }
+
+void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info) {
+	int ic = 0, jc = 0, kc = 0;
+
+	double xp2, yp2, zp2;
+	int Nx = sclx.ms.Nx;
+	int Ny = sclx.ms.Ny;
+	int Nz = sclx.ms.Nz;
+
+	int id[3], jd[3], kd[3]; // store i+-1,k+-1,j+-1
+
+	// the index of the grid where the particle is
+	// Nx = 7
+	// 0    1    2    3    4    5    6    7
+	// :----|----|----|----|----|----|----|----:
+	//   0     1    2   3    4    5     6   7
+	// if periodic: 0=6, 1=7
+	// actual grid range: 1 to 6
+
+
+
+	for (int i = 1; i <= Nx; i++) {
+		if (pos(0) < sclx.ms.x(i)) { ic = i - 1; break; }
+		
+	}
+	for (int j = 1; j <= Ny; j++) {
+		if (pos(1) < sclx.ms.y(j)) { jc = j - 1; break; }
+	}
+
+	for (int k = 1; k <= Nz; k++) {
+		if (pos(2) < sclx.ms.z(k)) { kc = k - 1; break; }
+	}
+
+
+	// the position of grid centers at left, current, right mesh
+	double xcenter[3], ycenter[3], zcenter[3];
+
+	xcenter[0] = sclx.ms.xc(ic - 1);
+	xcenter[1] = sclx.ms.xc(ic);
+	xcenter[2] = sclx.ms.xc(ic + 1);
+
+	ycenter[0] = sclx.ms.yc(jc - 1);
+	ycenter[1] = sclx.ms.yc(jc);
+	ycenter[2] = sclx.ms.yc(jc + 1);
+
+	zcenter[0] = sclx.ms.zc(kc - 1);
+	zcenter[1] = sclx.ms.zc(kc);
+	zcenter[2] = sclx.ms.zc(kc + 1);
+
+
+	id[0] = sclx.ms.ima(ic);
+	id[1] = ic;
+	id[2] = sclx.ms.ipa(ic);
+	jd[0] = sclx.ms.jma(jc);
+	jd[1] = jc;
+	jd[2] = sclx.ms.jpa(jc);
+	kd[0] = sclx.ms.kma(kc);
+	kd[1] = kc;
+	kd[2] = sclx.ms.kpa(kc);
+
+	double valx = 0;
+	double valy = 0;
+	double valz = 0;
+	//double mult1 = 0;
+	double basex[3]{}, basey[3]{}, basez[3]{};
+	Lag2Bases(pos(0), xcenter[0], xcenter[1], xcenter[2], basex);
+	Lag2Bases(pos(1), ycenter[0], ycenter[1], ycenter[2], basey);
+	Lag2Bases(pos(2), zcenter[0], zcenter[1], zcenter[2], basez);
+
+
+
+	for (int i = -1; i <= 1; ++i) {
+		for (int j = -1; j <= 1; ++j) {
+			for (int k = -1; k <= 1; ++k) {
+				double mult1 = basex[i + 1] * basey[j + 1] * basez[k + 1];
+				//mult1 = c1 * c2 * c3;
+				valx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+				valy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+				valz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+
+
+			}
+		}
+	}
+
+	info[0] = valx;
+	info[1] = valy;
+	info[2] = valz;
+
+
+}
+
+
+double Lag2nd3D::Lag2Base(const int& iflag, const double xp, const double x0, const double x1, const double x2) {
+	if (iflag == 0) {
+		return (xp - x1) * (xp - x2) / (x0 - x1) / (x0 - x2);
+	}
+	else if (iflag == 1) {
+		return (xp - x0) * (xp - x2) / (x1 - x0) / (x1 - x2);
+	}
+	else if (iflag == 2) {
+		return (xp - x0) * (xp - x1) / (x2 - x0) / (x2 - x1);
+	}
+	else {
+		std::cout << "[error]at [Lag2Base()]:check the input iflag" << std::endl;
+		return 0;
+	}
+}
+
+
+void Lag2nd3D::Lag2Bases(const double xp, const double x0, const double x1, const double x2, double coeff[3]) {
+	double xpx0 = xp - x0;
+	double xpx1 = xp - x1;
+	double xpx2 = xp - x2;
+	double x0x1 = x0 - x1;
+	double x1x2 = x1 - x2;
+	double x0x2 = x0 - x2;
+
+	coeff[0] = xpx1 * xpx2 / (x0x1) / (x0x2);
+	coeff[1] = xpx0 * (xpx2) / (-x0x1) / (x1x2);
+	coeff[2] = (xpx0) * (xpx1) / (-x0x2) / (-x1x2);
+
+}
+
 
 void Lag2nd3D::interpCoef(double dx, double dy, double dz) {
 	this->dx = dx;

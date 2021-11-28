@@ -56,9 +56,9 @@ bool Fop::makeDir(const std::string& path) {
 #elif defined(__linux__)
 	int err = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 #endif
-	if (err != 0) {
-		cout << "?" << endl;
-	}
+	//if (err != 0) {
+	//	cout << "?" << endl;
+	//}
 
 	return true;
 }

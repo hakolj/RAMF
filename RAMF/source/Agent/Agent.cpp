@@ -9,13 +9,13 @@ shared_ptr<Agent> AgentInitializer(const std::string& path) {
 	//read config
 	Config config(path, "AGENT");
 	shared_ptr<Agent> pagent;
-	cout << pagent.use_count() << endl;
+	cout << "pagent use count = " << pagent.use_count() << endl;
 
 	string actorname = config.Read("type", string("_EMPTY"));
 	unsigned agentnum = config.Read("agentnum", 1);
 	if (actorname == "InertialessSwimmer") {
 		pagent = make_shared<InertialessSwimmer>(agentnum);
-		cout << pagent.use_count() << endl;
+		cout << "pagent use count = " << pagent.use_count() << endl;
 	}
 	else if (actorname == "_EMPTY") {
 		cout << "Agent type is not defined. Check config file." << endl;

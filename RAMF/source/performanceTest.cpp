@@ -2,7 +2,7 @@
 #include "performanceTest.h"
 #include "SimuManager.h"
 #include "Sensor.h"
-
+#include "Timer.h"
 #include "Actor.h"
 #include "Random.h"
 #include "Task.h"
@@ -32,7 +32,6 @@ extern void performanceTest() {
 
 
 
-
 	//torch::Tensor tensor = torch::rand({ 9,9 });
 	//std::cout << tensor << std::endl;
 
@@ -48,6 +47,59 @@ extern void performanceTest() {
 
 	env->reset();
 	env->update(1.0);
+
+
+	shared_ptr<LoadedFlow> hit = dynamic_pointer_cast<LoadedFlow>(env);
+	cout << hit->datapool.upool[0](1, 2, 1) << endl;
+
+
+
+
+
+
+
+	vec3d uf;
+	uf[0] = 0;
+	uf[1] = 0;
+	uf[2] = 0;
+	vec3d uf2;
+	uf2[0] = 0;
+	uf2[1] = 0;
+	uf2[2] = 0;
+
+	Timer timer;
+	timer.Tic();
+	/*for (int i = 0; i < 1000000; i++) {
+		vec3d temppos;
+		temppos = Matrix<double, 3, 1>::Random();
+		temppos[0] += 1;
+		temppos[1] += 1;
+		temppos[2] += 1;
+		hit->interpolater.interp3d_v1(temppos, *(hit->u), *hit->v, *hit->w, uf);
+
+	}*/
+	timer.Toc();
+	cout <<"new interp" << timer.elaspe() << endl;
+
+	timer.Tic();
+	for (int i = 0; i < 1000000; i++) {
+		vec3d temppos;
+		temppos = Matrix<double, 3, 1>::Random();
+		temppos[0] += 1;
+		temppos[1] += 1;
+		temppos[2] += 1;
+		hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+		hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2);
+		if ((uf2 - uf).maxCoeff() > 1e-14)		cout << uf2 - uf << endl;
+
+	}
+	timer.Toc();
+	cout << "old interp" << timer.elaspe() << endl;
+	
+
+
+	//cout << upool[0](1, 2, 1) << endl;
+//cout << upool[1](1, 2, 1) << endl;
 	//int dimState = sensor->dim();
 	//int numAction = actor->num();
 	//MachineLearning* ml;

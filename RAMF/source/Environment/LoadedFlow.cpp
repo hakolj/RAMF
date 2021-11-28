@@ -11,7 +11,7 @@ LoadedFlow::LoadedFlow(const Mesh& ms) :
 	u(NULL), v(NULL), w(NULL), dudx(ms), dudy(ms), dudz(ms), dvdx(ms), dvdy(ms), dvdz(ms),
 	dwdx(ms), dwdy(ms), dwdz(ms), indexlist(0, 0), interpolater(),datapool()
 {
-	interpolater.interpCoef(ms.Lx / ms.Nx, ms.Ly / ms.Ny, ms.Lz / ms.Nz);
+	interpolater.interpCoef(ms.Lx / (ms.Nx-1), ms.Ly / (ms.Ny-1), ms.Lz / (ms.Nz-1));
 	//u = Scalar(ms); v = Scalar(ms); w = Scalar(ms);
 	//dudx = Scalar(ms); dudy = Scalar(ms); dudz = Scalar(ms);
 	//dvdx = Scalar(ms); dvdy = Scalar(ms); dvdz = Scalar(ms);
@@ -32,10 +32,19 @@ void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gra
 		temppos[1] = fmod(temppos[1] + ms.Ly, ms.Ly);
 		temppos[2] = fmod(temppos[2] + ms.Lz, ms.Lz);
 		//cout << temppos << endl;
+		//interpolater.interp3d(temppos, *u, *v, *w, uf[pn]);
+		//interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn]);
+		//interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn]);
+		//interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
+
 		interpolater.interp3d(temppos, *u, *v, *w, uf[pn]);
 		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn]);
 		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn]);
 		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
+		//interpolater.interp3d_old(temppos, *u, *v, *w, uf[pn]);
+		//interpolater.interp3d_old(temppos, dudx, dudy, dudz, gradu[pn]);
+		//interpolater.interp3d_old(temppos, dvdx, dvdy, dvdz, gradv[pn]);
+		//interpolater.interp3d_old(temppos, dwdx, dwdy, dwdz, gradw[pn]);
 	}
 
 
@@ -54,10 +63,16 @@ void LoadedFlow::initialize(const std::string& path, const Config& config) {
 		ss << stpstr;
 		ss >> start >> end >> interv;
 		int curridx = start;
-		while (curridx <= end) {
-			indexlist.push_back(curridx);
-			curridx += interv;
+		if (interv == 0) {
+			cout << "Error: flow field index has zero interv." << endl;
 		}
+		else {
+			while (curridx < end + interv) {
+				indexlist.push_back(curridx);
+				curridx += interv;
+			}
+		}
+
 	}
 	ifrozen = config.Read<bool>("random frozen", false);
 	_nextFieldCount = config.Read<int>("steps for next field", 1);
@@ -76,7 +91,7 @@ void LoadedFlow::reset() {
 	_updateStepCount = 0;
 	int chosen = ifrozen ? rd::randi(0, indexlist.size()) : 0;
 	//loadFlowData(flowfieldpath.c_str(), indexlist[chosen]);
-	cout << chosen << endl;
+	cout << "chosen flow idx = " << chosen << endl;
 	loadFlowData(chosen);
 	makeGradient();
 }
@@ -114,9 +129,9 @@ void LoadedFlow::loadFlowData(int loadstep) {
 	v = &(datapool.vpool[loadstep]);
 	w = &(datapool.wpool[loadstep]);
 
-	if (u->ms.Nx != 96) {
-		cout << loadstep << endl;
-	}
+	//if (u->ms.Nx != 96) {
+	//	cout << "debug 96"<< loadstep << endl;
+	//}
 
 	return;
 }
