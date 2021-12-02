@@ -7,7 +7,7 @@ using namespace std;
 
 
 LoadedFlow::LoadedFlow(const Mesh& ms) :
-	Nx(ms.Nx), Ny(ms.Ny), Nz(ms.Nz), LD(ms.Lx), ms(ms),
+	Nx(ms.Nx), Ny(ms.Ny), Nz(ms.Nz), Lx(ms.Lx), Ly(ms.Ly), Lz(ms.Lz), ms(ms),
 	u(NULL), v(NULL), w(NULL), dudx(ms), dudy(ms), dudz(ms), dvdx(ms), dvdy(ms), dvdz(ms),
 	dwdx(ms), dwdy(ms), dwdz(ms), indexlist(0, 0), interpolater(),datapool()
 {
@@ -37,10 +37,10 @@ void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gra
 		//interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn]);
 		//interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
 
-		interpolater.interp3d(temppos, *u, *v, *w, uf[pn]);
-		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn]);
-		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn]);
-		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
+		interpolater.interp3d(temppos, *u, *v, *w, uf[pn], fieldstore);
+		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn], fieldstore);
+		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], fieldstore);
+		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], fieldstore);
 		//interpolater.interp3d_old(temppos, *u, *v, *w, uf[pn]);
 		//interpolater.interp3d_old(temppos, dudx, dudy, dudz, gradu[pn]);
 		//interpolater.interp3d_old(temppos, dvdx, dvdy, dvdz, gradv[pn]);
@@ -77,6 +77,25 @@ void LoadedFlow::initialize(const std::string& path, const Config& config) {
 	ifrozen = config.Read<bool>("random frozen", false);
 	_nextFieldCount = config.Read<int>("steps for next field", 1);
 
+	_boundaryType = config.Read<string>("Boundary Type");
+
+	_fieldStoreStr = config.Read<string>("Field Store Type", "UDF");
+	if (_fieldStoreStr == "UDF") {
+		fieldstore = FieldStoreType::UDF; //undefined
+		
+	}
+	else if (_fieldStoreStr == "CCC") {
+		fieldstore = FieldStoreType::CCC;
+	}
+	else if (_fieldStoreStr == "CEC") {
+		fieldstore = FieldStoreType::CEC;
+	}
+
+	if (fieldstore == FieldStoreType::UDF) {
+		cout << "Error: the field store type is not assigned explicitly in config.txt" << endl;
+		return;
+	}
+
 	flowfieldpath = config.Read<string>("data path");
 	flowfieldpath = flowfieldpath + "/";
 
@@ -102,23 +121,80 @@ std::shared_ptr<LoadedFlow> LoadedFlow::makeInstance(const Config& config) {
 	string str = config.Read<string>("Mesh Number");
 	stringstream ss;
 	int Nx, Ny, Nz;
-	double L;
+	double Lx, Ly, Lz;
 	ss << str;
 	ss >> Nx >> Ny >> Nz;
 
-	str = config.Read<string>("Domain Size", "2PI");
-	str = str.substr(0, str.find("PI"));
+	size_t iPI;
+	bool pflag;
+
+	str = config.Read<string>("DomainX");
+	iPI = str.find("PI");
+	pflag = iPI != string::npos;
+	if (pflag) {
+		str = str.substr(0, iPI);
+	}
 	ss.str("");
 	ss.clear();
 	ss << str;
-	ss >> L;
+	ss >> Lx;
+	if (pflag) Lx *= M_PI;
 
-	Geometry_prdXYZ geo(Nx, Ny, Nz, L * PI, L * PI, L * PI);
-	geo.InitMesh();
-	geo.InitIndices();
-	geo.InitInterval();
-	geo.InitWaveNumber();
-	Mesh mesh(geo);
+
+	str = config.Read<string>("DomainY");
+	iPI = str.find("PI");
+	pflag = iPI != string::npos;
+	if (pflag) {
+		str = str.substr(0, iPI);
+	}
+	ss.str("");
+	ss.clear();
+	ss << str;
+	ss >> Ly;
+	if (pflag) Ly *= M_PI;
+
+	str = config.Read<string>("DomainZ");
+	iPI = str.find("PI");
+	pflag = iPI != string::npos;
+	if (pflag) {
+		str = str.substr(0, iPI);
+	}
+	ss.str("");
+	ss.clear();
+	ss << str;
+	ss >> Lz;
+	if (pflag) Lz *= M_PI;
+
+
+	string boundType = config.Read<string>("Boundary Type");
+
+	Geometry* geo = NULL;
+
+	if (boundType == "PPP") {
+		
+		geo = new Geometry_prdXYZ (Nx, Ny, Nz, Lx, Ly, Lz);
+	}
+	else if (boundType == "PWP") {
+		geo = new Geometry_prdXZ(Nx, Ny, Nz, Lx, Ly, Lz);
+	}
+	else {
+		cout << "environment boundary type " << boundType << " is undefined" << endl;
+		exit;
+	}
+	string meshYPath = config.Read<string>("Y Mesh Path", "");
+	if (meshYPath.length() == 0) 
+		geo->InitMeshEdge(); //uniform mesh
+	else 
+		geo->InitMeshEdge(true, meshYPath.c_str()); //y mesh from file
+
+	
+	geo->InitMesh();
+	geo->InitIndices();
+	geo->InitInterval();
+	geo->InitWaveNumber();
+	Mesh mesh(*geo);
+
+	delete geo;
 
 	return make_shared<LoadedFlow>(mesh);
 }
@@ -137,9 +213,9 @@ void LoadedFlow::loadFlowData(int loadstep) {
 }
 
 void LoadedFlow::makeGradient() {
-	u->GradientAtCenter(dudx, dudy, dudz);
-	v->GradientAtCenter(dvdx, dvdy, dvdz);
-	w->GradientAtCenter(dwdx, dwdy, dwdz);
+	u->GradientAtCenter(dudx, dudy, dudz, _fieldStoreStr[0]);
+	v->GradientAtCenter(dvdx, dvdy, dvdz, _fieldStoreStr[1]);
+	w->GradientAtCenter(dwdx, dwdy, dwdz, _fieldStoreStr[2]);
 	return;
 }
 

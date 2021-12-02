@@ -71,7 +71,7 @@ void Lag2nd3D::interp3d_old(const vec3d& pos, const Scalar& sclx, const Scalar& 
 
 }
 
-void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info) {
+void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info, const FieldStoreType storeType) {
 	int ic = 0, jc = 0, kc = 0;
 
 	double xp2, yp2, zp2;
@@ -88,7 +88,6 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 	//   0     1    2   3    4    5     6   7
 	// if periodic: 0=6, 1=7
 	// actual grid range: 1 to 6
-
 
 
 	for (int i = 1; i <= Nx; i++) {
@@ -139,25 +138,85 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 	Lag2Bases(pos(1), ycenter[0], ycenter[1], ycenter[2], basey);
 	Lag2Bases(pos(2), zcenter[0], zcenter[1], zcenter[2], basez);
 
+	//double Qx = 0.0;
+	//double Qy = 0.0;
+	//double Qz = 0.0;
+
+	//minus half length of a mesh because the data is stored at the center of mesh
+	//xp2 = pos[0] - ((ic - 1) * dx + dx / 2);
+	//yp2 = pos[1] - ((jc - 1) * dy + dy / 2);
+	//zp2 = pos[2] - ((kc - 1) * dz + dz / 2);
+
+	//bug: when idx = 1, coeff is different using old and new method
+
+	if (storeType == FieldStoreType::CCC) {
+		for (int i = -1; i <= 1; ++i) {
+			for (int j = -1; j <= 1; ++j) {
+				for (int k = -1; k <= 1; ++k) {
+					double mult1 = basex[i + 1] * basey[j + 1] * basez[k + 1];
+					//mult1 = c1 * c2 * c3;
+					valx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+					valy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+					valz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
 
 
-	for (int i = -1; i <= 1; ++i) {
-		for (int j = -1; j <= 1; ++j) {
-			for (int k = -1; k <= 1; ++k) {
-				double mult1 = basex[i + 1] * basey[j + 1] * basez[k + 1];
-				//mult1 = c1 * c2 * c3;
-				valx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
-				valy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
-				valz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+					//double coeffA = (A(i + 1, 0) * pow(xp2, 2) + A(i + 1, 1) * xp2 + A(i + 1, 2));
+					//double coeffB = (B(j + 1, 0) * pow(yp2, 2) + B(j + 1, 1) * yp2 + B(j + 1, 2));
+					//double coeffC = (C(k + 1, 0) * pow(zp2, 2) + C(k + 1, 1) * zp2 + C(k + 1, 2));
+					//double mult = coeffA * coeffB * coeffC;
+
+					//Qx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
+					//Qy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
+					//Qz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
 
 
+				}
+			}
+		}
+	}
+	else if (storeType == FieldStoreType::CEC) {
+		double baseyy[3]{}; // used for interp of v
+		int m = (jc < Ny / 2.0) ? jc + 1 : jc; // middle index of yc
+		Lag2Bases(pos(1), sclx.ms.y(m-1), sclx.ms.y(m), sclx.ms.y(m + 1), baseyy); // used only for interp of v
+
+		for (int i = -1; i <= 1; ++i) {
+			for (int j = -1; j <= 1; ++j) {
+				for (int k = -1; k <= 1; ++k) {
+					double mult1 = basex[i + 1] * basey[j + 1] * basez[k + 1];
+					double multy = basex[i + 1] * baseyy[j + 1] * basez[k + 1];
+					//mult1 = c1 * c2 * c3;
+					valx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+					valy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * multy;
+					valz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult1;
+
+
+					//double coeffA = (A(i + 1, 0) * pow(xp2, 2) + A(i + 1, 1) * xp2 + A(i + 1, 2));
+					//double coeffB = (B(j + 1, 0) * pow(yp2, 2) + B(j + 1, 1) * yp2 + B(j + 1, 2));
+					//double coeffC = (C(k + 1, 0) * pow(zp2, 2) + C(k + 1, 1) * zp2 + C(k + 1, 2));
+					//double mult = coeffA * coeffB * coeffC;
+
+					//Qx += sclx(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
+					//Qy += scly(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
+					//Qz += sclz(id[i + 1], jd[j + 1], kd[k + 1]) * mult;
+
+
+				}
 			}
 		}
 	}
 
+
+
+
 	info[0] = valx;
 	info[1] = valy;
 	info[2] = valz;
+
+#if DEBUG
+	if (isnan(info[0])||isnan(info[1])||isnan(info[2])) {
+		std::cout << "nan value in interp" << std::endl;
+	}
+#endif
 
 
 }

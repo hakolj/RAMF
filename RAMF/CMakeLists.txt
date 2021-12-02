@@ -24,6 +24,11 @@ foreach(dir ${dirs})
 endforeach()
 endif()
 
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+endif()
+
 
 ## start compiling source
 

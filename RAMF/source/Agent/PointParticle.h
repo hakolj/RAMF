@@ -16,6 +16,7 @@ public:
 	vectors3d p1, p2, p3;
 	vectors3d vp_new, vp_old;
 	vectors4d deedt_new, deedt_old;
+	std::string boundaryType;
 
 protected:
 	vectors3d uf, ufpf; //fluid velocity at agent position
@@ -34,9 +35,14 @@ public:
 	virtual void getInfo() = 0; //get flow info
 	virtual void useInfo() = 0;
 	inline virtual void setEnv(std::shared_ptr<Environment> env) {
+		boundaryType = env->boundaryType();
 		envInfoAtPoint = std::dynamic_pointer_cast<InfoAtPointAble>(env);
 		return;
 	}
+
+	//fully elastic colliding or periodic boundary condition for point-particle.
+	virtual void BoundaryCondition(std::shared_ptr<Environment> env);
+
 	static Eigen::Matrix3d ee2R(const vec4d& ee);
 	static Eigen::Matrix3d ee2R(const vec4d& ee, vec3d& p1, vec3d& p2, vec3d& p3);
 	static vec4d nn2ee(vec3d nn);

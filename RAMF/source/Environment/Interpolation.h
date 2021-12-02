@@ -6,6 +6,7 @@
 #include "pch.h"
 #include "Scalar.h"
 
+
 class Lag2nd3D {
 public:
 	
@@ -26,7 +27,7 @@ public:
 
 	void interpCoef(double dx, double dy, double dz);
 	void interp3d_old(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info);
-	void interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info);
+	void interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly, const Scalar& sclz, vec3d& info, const FieldStoreType storeType);
 
 	// calculate Lagrangian interpolation coefficient using local grid information
 	double Lag2Base(const int& iflag, const double xp, const double x0, const double x1, const double x2);

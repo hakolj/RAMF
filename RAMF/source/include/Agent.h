@@ -19,6 +19,7 @@ public:
 	virtual void useInfo() = 0; // preprocess flow info before update
 	virtual void setEnv(std::shared_ptr<Environment> env) = 0;
 	virtual void dump(const char* path, int step) = 0; //dump agent info
+	virtual void BoundaryCondition(std::shared_ptr<Environment> env) {};
 };
 
 extern std::shared_ptr<Agent> AgentInitializer(const std::string& path);

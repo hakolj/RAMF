@@ -24,4 +24,10 @@ public:
 		return;
 	}
 	void update(double dt) {};
+	virtual std::string boundaryType() { return "PPN"; }
+	inline virtual void getDomainSize(double& Lx, double& Ly, double& Lz) {
+		Lx = _lscale * 2 * M_PI;
+		Ly = _lscale * 2 * M_PI; 
+		Lz = _lscale * 2 * M_PI;
+	}
 };

@@ -50,9 +50,8 @@ int main()
 	std::string configpath = "D:/Homework/Y4-1/2021-09-07-RAMF_cmake/work/config.txt";	
 #endif
 	SimuManager smanager = SimuManager(configpath);
-
-	shared_ptr<Agent> agent = AgentInitializer(configpath);
 	shared_ptr<Environment> env = EnvInitializer(configpath);
+	shared_ptr<Agent> agent = AgentInitializer(configpath);
 	shared_ptr<Task> task = TaskInitializer(configpath);
 	shared_ptr<Sensor> sensor = SensorInitializer(configpath);
 	shared_ptr<Actor> actor = ActorInitializer(configpath);
@@ -128,6 +127,7 @@ int main()
 			}
 
 			agent->update(smanager.timestepsize);
+			agent->BoundaryCondition(env);
 			env->update(smanager.timestepsize);
 			agent->getInfo();
 			agent->useInfo();//ag.convertFrame();

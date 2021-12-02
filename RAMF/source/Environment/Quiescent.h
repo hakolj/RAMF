@@ -19,4 +19,10 @@ public:
 	void reset() {}
 	void initialize(const std::string& path, const Config& config) {};
 	void update(double dt) {};
+	virtual std::string boundaryType() { return "PPP"; }
+	inline virtual void getDomainSize(double& Lx, double& Ly, double& Lz) {
+		Lx = 1.0;
+		Ly = 1.0;
+		Lz = 1.0;
+	}
 };

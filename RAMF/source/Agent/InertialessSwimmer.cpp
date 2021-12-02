@@ -22,8 +22,9 @@ void InertialessSwimmer::initialize(const std::string& path, const Config& confi
 	setMotility(vswim, B);
 	double a = config.Read("radius", 0.0);
 	double lda = config.Read("lambda", 1.0);
+	double gravity = config.Read("gravity", 0.0);
 	setShape(a, lda);
-	setPhysics(1017, 1000, 1e-6, 9.8);
+	setPhysics(1017, 1000, 1e-6, gravity);
 	setVsettle();
 	iFluidInertTorq = config.Read<bool>("fluid inertial torque", true);
 	setInertialTorqueConst();
@@ -44,7 +45,8 @@ void InertialessSwimmer::reset() {
 	}
 	else if (_dimension == 3) {
 		initOrient3D();
-		initPos3D(2 * M_PI, 2 * M_PI, 2 * M_PI);
+		//initPos3D(2 * M_PI, 2 * M_PI, 2 * M_PI);
+		initPos3D(2  , 2 , 2 );
 	}
 	resetFlowInfo();
 	return;
@@ -126,9 +128,15 @@ void InertialessSwimmer::update(double timestep) {
 
 		_updateRot(i, angvel, timestep);
 
+		if (isnan(pos[0](0))) {
+			cout << "nan value in inertialess swimmers update" << endl;
+		}
+
 	}
 	_istep1rot = false;
 	_istep1trans = false;
+
+
 }
 
 // dump particle field

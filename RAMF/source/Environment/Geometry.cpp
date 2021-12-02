@@ -95,11 +95,15 @@ void Geometry::DeepCopy(const Geometry &geo)
 	}
 }
 
-
-void Geometry::InitMesh(double dy_min, const char *path)
-{
+void Geometry::InitMeshEdge(bool loadY, const char* path) {
 	for (int i = 1; i <= Nx; i++) x[i] = Lx * (i - 1.) / (Nx - 1);
-	for (int j = 1; j <= Ny; j++) y[j] = Ly * (j - 1.) / (Ny - 1);
+	if (loadY) {
+		InitMeshY(path);
+	}
+	else {
+		for (int j = 1; j <= Ny; j++) y[j] = Ly * (j - 1.) / (Ny - 1);
+	}
+
 	for (int k = 1; k <= Nz; k++) z[k] = Lz * (k - 1.) / (Nz - 1);
 
 	//if (path) InitMeshY(path);
@@ -108,27 +112,36 @@ void Geometry::InitMesh(double dy_min, const char *path)
 	x[0] = 0; // set useless points to 0
 	y[0] = 0;
 	z[0] = 0;
-
-	for (int i=1; i<Nx; i++) xc[i] = .5 * (x[i] + x[i+1]);
-	for (int j=1; j<Ny; j++) yc[j] = .5 * (y[j] + y[j+1]);
-	for (int k=1; k<Nz; k++) zc[k] = .5 * (z[k] + z[k+1]);
-
-	xc[0] = x[1]; xc[Nx] = x[Nx];
-	yc[0] = y[1]; yc[Ny] = y[Ny];
-	zc[0] = z[1]; zc[Nz] = z[Nz];
 }
+
+
+
+//void Geometry::InitMesh(double dy_min, const char *path)
+//{
+//
+//
+//	for (int i=1; i<Nx; i++) xc[i] = .5 * (x[i] + x[i+1]);
+//	for (int j=1; j<Ny; j++) yc[j] = .5 * (y[j] + y[j+1]);
+//	for (int k=1; k<Nz; k++) zc[k] = .5 * (z[k] + z[k+1]);
+//
+//	xc[0] = x[1]; xc[Nx] = x[Nx];
+//	yc[0] = y[1]; yc[Ny] = y[Ny];
+//	zc[0] = z[1]; zc[Nz] = z[Nz];
+//}
+
+
 void Geometry::InitMesh()
 {
-	for (int i = 1; i <= Nx; i++) x[i] = Lx * (i - 1.) / (Nx - 1);
-	for (int j = 1; j <= Ny; j++) y[j] = Ly * (j - 1.) / (Ny - 1);
-	for (int k = 1; k <= Nz; k++) z[k] = Lz * (k - 1.) / (Nz - 1);
+	//for (int i = 1; i <= Nx; i++) x[i] = Lx * (i - 1.) / (Nx - 1);
+	//for (int j = 1; j <= Ny; j++) y[j] = Ly * (j - 1.) / (Ny - 1);
+	//for (int k = 1; k <= Nz; k++) z[k] = Lz * (k - 1.) / (Nz - 1);
 
-	//if (path) InitMeshY(path);
-	//else      InitMeshY(dy_min);
+	////if (path) InitMeshY(path);
+	////else      InitMeshY(dy_min);
 
-	x[0] = 0; // set useless points to 0
-	y[0] = 0;
-	z[0] = 0;
+	//x[0] = 0; // set useless points to 0
+	//y[0] = 0;
+	//z[0] = 0;
 
 	for (int i = 1; i < Nx; i++) xc[i] = .5 * (x[i] + x[i + 1]);
 	for (int j = 1; j < Ny; j++) yc[j] = .5 * (y[j] + y[j + 1]);
@@ -226,14 +239,14 @@ void Geometry::InitMeshY(double dy_min)
 			y[j] = 1 + Ly * ((j-1)/(Ny-1.) - .5);
 }
 
-// don't use for uniform mesh
+// load y mesh edge position from file
 void Geometry::InitMeshY(const char *path)
 /* read grid from file at specified path */
 {
 	FILE *fp;
 	char str[1024];
 
-	sprintf(str, "%sCHANNEL.GRD", path);
+	sprintf(str, "%s", path);
 
 	fp = fopen(str, "r");
 
@@ -350,28 +363,28 @@ double newton_iter(double tgt, double (*pfun)(double, int, double), int N, doubl
 
 #ifdef DEBUG
 
-int main()
-{
-	Geometry geo0(4,8,4, 2*PI,2,PI);
-	Geometry geo1(4,8,4, 2*PI,1,PI);
-
-	geo0.InitIndices();
-	geo1.InitIndices();
-
-	geo0.InitMesh(0);
-	Mesh(geo0).WriteMeshY("path_Mesh/test0/");
-
-	geo0.InitMesh(.1);
-	Mesh(geo0).WriteMeshY("path_Mesh/test1/");
-
-	geo1.InitMesh(-.02);
-	Mesh(geo1).WriteMeshY("path_Mesh/test2/");
-
-	geo1.InitMesh(0, "path_Mesh/test2/");
-	Mesh(geo1).WriteMeshY("path_Mesh/test3/");
-
-	return 0;
-}
+//int main()
+//{
+//	Geometry geo0(4,8,4, 2*PI,2,PI);
+//	Geometry geo1(4,8,4, 2*PI,1,PI);
+//
+//	geo0.InitIndices();
+//	geo1.InitIndices();
+//
+//	geo0.InitMesh(0);
+//	Mesh(geo0).WriteMeshY("path_Mesh/test0/");
+//
+//	geo0.InitMesh(.1);
+//	Mesh(geo0).WriteMeshY("path_Mesh/test1/");
+//
+//	geo1.InitMesh(-.02);
+//	Mesh(geo1).WriteMeshY("path_Mesh/test2/");
+//
+//	geo1.InitMesh(0, "path_Mesh/test2/");
+//	Mesh(geo1).WriteMeshY("path_Mesh/test3/");
+//
+//	return 0;
+//}
 
 #endif
 

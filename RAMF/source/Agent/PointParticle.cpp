@@ -183,3 +183,32 @@ void PointParticle::_updateRot(int i, const vec3d& angvel, double timestep) {
 	ee2R(ee[i], p1[i], p2[i], p3[i]); //update particle axis direction
 	return;
 }
+
+
+void PointParticle::BoundaryCondition(std::shared_ptr<Environment> env) {
+	std::string bc = env->boundaryType();
+	//nothing to do for periodic bc 
+	double L[3];
+	env->getDomainSize(L[0], L[1], L[2]);
+
+	//wall bc
+	for (int i = 0; i < agentnum; i++) {
+		//loop for three dims
+		for (int dim = 0; dim < 3; dim++) {
+			if (bc[dim] == 'W') {				
+				if (pos[i](dim) < 0.0) {
+					pos[i](dim) = -pos[i](dim);
+					vp_new[i](dim) *= -1;
+				}
+				if (pos[i](dim) > L[dim]) {
+					pos[i](dim) = L[dim] - (pos[i](dim) - L[dim]);
+					vp_new[i](dim) *= -1;
+				}
+
+			}
+		}
+		
+	}
+	
+
+}

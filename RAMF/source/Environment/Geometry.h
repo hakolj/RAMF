@@ -25,12 +25,19 @@ public:
 	Geometry(const Geometry &geo);
 	Geometry& operator=(const Geometry &geo);
 	
-	void InitMesh(double dy_min, const char *path=NULL);
-	//for uniform mesh
-	void InitMesh();
-	void InitInterval();
-	void InitWaveNumber();
-	void InitIndices();
+	// init x[], y[], z[]
+	virtual void InitMeshEdge(bool loadY=false, const char* path=NULL);
+	
+
+
+	// init xc[],yc[],zc[]
+	//virtual void InitMesh(double dy_min, const char *path=NULL);
+	// init xc[],yc[],zc[]
+	virtual void InitMesh();
+
+	virtual void InitInterval();
+	virtual void InitWaveNumber();
+	virtual void InitIndices();
 
 	void WriteMeshY(const char *path) const;
 	void WriteMesh(const char *path) const;
@@ -54,6 +61,7 @@ private:
 	void DeepCopy(const Geometry &geo);
 	void InitMeshY(const char *path);
 	void InitMeshY(double dy_min);
+
 	void AlignBoundaryYc(const Geometry &geo);
 };
 
@@ -65,38 +73,38 @@ private:
 // imu(2) = 1, ipu(Nx-1) = Nx
 // ************************** //
 
-class Geometry_prdz: public Geometry
-{
-public:
-	using Geometry::Geometry;
-
-	void InitMesh(double dy_min, const char *path=NULL)
-	{
-		Geometry::InitMesh(dy_min, path);
-		// configure boundary zc so that its differencing position is equivalent to the periodic node
-		zc[0] = z[1] - (z[Nz] - zc[Nz-1]);
-		zc[Nz]= z[Nz]+ (zc[1] - z[1]);
-	};
-
-	void InitIndices()
-	{
-		Geometry::InitIndices();
-
-		for (int k=1; k<Nz; k++) {
-			kma[k] = k==1 ? Nz-1 : k-1;
-			kpa[k] = k==Nz-1 ? 1 : k+1;
-		}
-	};
-};
+//class Geometry_prdz: public Geometry
+//{
+//public:
+//	using Geometry::Geometry;
+//
+//	void InitMesh(double dy_min, const char *path=NULL)
+//	{
+//		Geometry::InitMesh(dy_min, path);
+//		// configure boundary zc so that its differencing position is equivalent to the periodic node
+//		zc[0] = z[1] - (z[Nz] - zc[Nz-1]);
+//		zc[Nz]= z[Nz]+ (zc[1] - z[1]);
+//	};
+//
+//	void InitIndices()
+//	{
+//		Geometry::InitIndices();
+//
+//		for (int k=1; k<Nz; k++) {
+//			kma[k] = k==1 ? Nz-1 : k-1;
+//			kpa[k] = k==Nz-1 ? 1 : k+1;
+//		}
+//	};
+//};
 
 
 // the index of the grid where the particle is
-// Nx = 7
+// Nx = 6
 // 0    1    2    3    4    5    6    7
-// :----|----|----|----|----|----|----|----:
-//   0     1    2   3    4    5     6   7
-// if periodic: 0=6, 1=7
-// actual grid range: 1 to 6
+// :----|----|----|----|----|----|----:
+//   0     1    2   3    4    5     6  
+// if periodic: 0=5, 1=6
+// actual grid range: 1 to 5
 // 
 // a slightly different periodic geometry by qjr.
 class Geometry_prdXYZ : public Geometry
@@ -124,6 +132,37 @@ public:
 		for (int j = 1; j <= Ny; j++) {
 			jma[j] = j == 1 ? Ny - 1 : j - 1;
 			jpa[j] = j == Ny - 1 ? 1 : j + 1;
+		}
+
+		for (int k = 1; k <= Nz; k++) {
+			kma[k] = k == 1 ? Nz - 1 : k - 1;
+			kpa[k] = k == Nz - 1 ? 1 : k + 1;
+		}
+	}
+
+};
+
+// periodic in X and Z
+class Geometry_prdXZ : public Geometry
+{
+public:
+	using Geometry::Geometry;
+
+	void InitMesh() {
+		Geometry::InitMesh();
+		xc[0] = x[1] - (x[Nx] - xc[Nx - 1]);
+		xc[Nx] = x[Nx] + (xc[1] - x[1]);
+		
+		zc[0] = z[1] - (z[Nz] - zc[Nz - 1]);
+		zc[Nz] = z[Nz] + (zc[1] - z[1]);
+	}
+
+	void InitIndices() {
+		Geometry::InitIndices();
+
+		for (int i = 1; i <= Nx; i++) {
+			ima[i] = i == 1 ? Nx - 1 : i - 1;
+			ipa[i] = i == Nx - 1 ? 1 : i + 1;
 		}
 
 		for (int k = 1; k <= Nz; k++) {

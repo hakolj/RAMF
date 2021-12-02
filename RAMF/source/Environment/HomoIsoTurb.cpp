@@ -28,10 +28,11 @@ void HomoIsoTurb::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gr
 		temppos[1] = fmod(temppos[1] + ms.Ly, ms.Ly);
 		temppos[2] = fmod(temppos[2] + ms.Lz, ms.Lz);
 		//cout << temppos << endl;
-		interpolater.interp3d(temppos, u, v, w, uf[pn]);
-		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn]);
-		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn]);
-		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
+		
+		interpolater.interp3d(temppos, u, v, w, uf[pn], FieldStoreType::CCC );
+		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn], FieldStoreType::CCC);
+		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], FieldStoreType::CCC);
+		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], FieldStoreType::CCC);
 	}
 
 
@@ -105,6 +106,7 @@ std::shared_ptr<HomoIsoTurb> HomoIsoTurb::makeInstance(const Config& config) {
 	ss >> L;
 
 	Geometry_prdXYZ geo(Nx, Ny, Nz, L*PI, L*PI, L*PI);
+	geo.InitMeshEdge();
 	geo.InitMesh();
 	geo.InitIndices();
 	geo.InitInterval();	
@@ -167,11 +169,12 @@ void HomoIsoTurb::loadFlowData(const char* path, int loadstep) {
 }
 
 void HomoIsoTurb::makeGradient() {
-	u.GradientAtCenter(dudx, dudy, dudz);
-	v.GradientAtCenter(dvdx, dvdy, dvdz);
-	w.GradientAtCenter(dwdx, dwdy, dwdz);
+	u.GradientAtCenter(dudx, dudy, dudz, 'C');
+	v.GradientAtCenter(dvdx, dvdy, dvdz, 'C');
+	w.GradientAtCenter(dwdx, dwdy, dwdz, 'C');
 	return;
 }
+
 
 
 void HomoIsoTurb::update(double dt) {

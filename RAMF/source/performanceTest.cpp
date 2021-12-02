@@ -68,18 +68,22 @@ extern void performanceTest() {
 	uf2[2] = 0;
 
 	Timer timer;
-	timer.Tic();
-	/*for (int i = 0; i < 1000000; i++) {
-		vec3d temppos;
-		temppos = Matrix<double, 3, 1>::Random();
-		temppos[0] += 1;
-		temppos[1] += 1;
-		temppos[2] += 1;
-		hit->interpolater.interp3d_v1(temppos, *(hit->u), *hit->v, *hit->w, uf);
+	//timer.Tic();
+	//for (int i = 0; i < 1000000; i++) {
+	//	vec3d temppos;
+	//	temppos = Matrix<double, 3, 1>::Random();
+	//	temppos[0] += 1;
+	//	temppos[1] += 1;
+	//	temppos[2] += 1;
+	//	hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
 
-	}*/
-	timer.Toc();
-	cout <<"new interp" << timer.elaspe() << endl;
+	//}
+	//timer.Toc();
+	cout <<"old interp" << timer.elaspe() << endl;
+	double dx = 2 * M_PI / 96;
+
+
+
 
 	timer.Tic();
 	for (int i = 0; i < 1000000; i++) {
@@ -88,13 +92,21 @@ extern void performanceTest() {
 		temppos[0] += 1;
 		temppos[1] += 1;
 		temppos[2] += 1;
+
+	
+		//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+
+		hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CEC);
 		hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
-		hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2);
-		if ((uf2 - uf).maxCoeff() > 1e-14)		cout << uf2 - uf << endl;
+		if ((uf2 - uf).maxCoeff() > 1e-14) { 
+			cout << uf2 - uf << endl; 
+			//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+			//hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CCC);
+		}
 
 	}
 	timer.Toc();
-	cout << "old interp" << timer.elaspe() << endl;
+	cout << "new interp" << timer.elaspe() << endl;
 	
 
 

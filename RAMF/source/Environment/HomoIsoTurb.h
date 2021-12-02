@@ -18,7 +18,7 @@ public:
 
 public:
 	int Nx, Ny, Nz;
-	double LD;
+	double LD; //length of domain (Lx=Ly=Lz=LD)
 	Mesh ms;
 	Scalar u, v, w;
 	Scalar dudx, dudy, dudz;
@@ -42,6 +42,8 @@ public:
 	virtual void reset();
 	virtual void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw);
 	virtual void update(double dt);
+	virtual std::string boundaryType() { return "PPP"; }
+	inline virtual void getDomainSize(double& Lx, double& Ly, double& Lz) { Lx = LD; Ly = LD; Lz = LD; }
 
 	static std::shared_ptr<HomoIsoTurb> makeInstance(const Config& config);
 

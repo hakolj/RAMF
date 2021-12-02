@@ -211,7 +211,7 @@ const double* Scalar::Gradient(int i, int j, int k) const
 }
 
 //using cell-centered scalar to compute Gradient at center. 2nd order centerd difference. Uniform mesh.
-void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz) const {
+void Scalar::GradientAtCenter_old(Scalar& gradx, Scalar& grady, Scalar& gradz) const {
 	//for periodic boundary
 	//for (int j = 0; j <= Ny; j++) {
 	//	for (int k = 0; k <= Nz; k++)
@@ -235,6 +235,62 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz) const
 				gradz(i, j, k) = 0.5 * (q_[kp] - q_[km]) / ms.hz(k);
 			}
 		}
+	}
+	return;
+}
+
+
+//using cell-centered scalar to compute Gradient at center. 2nd order centerd difference. Uniform mesh.
+void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const char storeType) const {
+	//for periodic boundary
+	//for (int j = 0; j <= Ny; j++) {
+	//	for (int k = 0; k <= Nz; k++)
+	//		val(0, j, k) = val(Nx, j, k);
+			//q_[ms.idx(0, j, k)] = q_[ms.idx(Nx, j, k)];
+
+	//}
+	//cout << *this << endl;
+
+	if (storeType == 'C') {
+
+#pragma omp parallel for
+		for (int j = 1; j <= Ny - 1; j++) {
+			for (int k = 1; k <= Nz - 1; k++) {
+				for (int i = 1; i <= Nx - 1; i++) {
+					int im, jm, km;
+					ms.imx(i, j, k, im, jm, km);
+					int ip, jp, kp;
+					ms.ipx(i, j, k, ip, jp, kp);
+
+					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
+					grady(i, j, k) = (q_[jp] - q_[jm]) / (ms.hy(j) + ms.hy(j + 1));
+					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));
+				}
+			}
+		}
+	}
+	else if (storeType == 'E') {
+//#pragma omp parallel for
+		for (int j = 1; j <= Ny - 1; j++) {
+			for (int k = 1; k <= Nz - 1; k++) {
+				for (int i = 1; i <= Nx - 1; i++) {
+					int im, jm, km;
+					ms.imx(i, j, k, im, jm, km);
+					int ip, jp, kp;
+					ms.ipx(i, j, k, ip, jp, kp);
+
+					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
+					grady(i, j, k) = (q_[jp] - q_[j]) / ms.dy(j);
+					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));
+#if DEBUG
+					if (isinf(grady(i, j, k))) {
+						cout<<"nan in makegradient center"<<endl;
+					}
+#endif
+				}
+			}
+		}
+
 	}
 	return;
 }

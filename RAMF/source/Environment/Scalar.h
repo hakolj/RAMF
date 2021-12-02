@@ -6,6 +6,13 @@
 #include "pch.h"
 #include "Geometry.h"
 
+enum FieldStoreType {
+	UDF = 0, //undefined
+	CCC = 1, //Center-Center-Center: uvw stored at the center of grid
+	CEC = 2 // Center-Edge-Center: uw stored at the center of grid, v at the center of surface in y direction
+};
+
+
 //
 class Scalar
 {
@@ -45,7 +52,9 @@ public:
 
 	// differential operators (operating on cell-centered quantities)
 	const double* Gradient(int i, int j, int k) const;
-	void GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz) const;
+	void GradientAtCenter_old(Scalar& gradx, Scalar& grady, Scalar& gradz) const;
+
+	void GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const char storeType) const;
 	
 	static void loadVelFromFortran(const char* path, Scalar& u, int numrank);
 
