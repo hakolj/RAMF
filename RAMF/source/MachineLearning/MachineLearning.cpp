@@ -14,6 +14,10 @@ std::shared_ptr<MachineLearning> MLInitializer(const std::string& path, const st
 	if (mlname == "QLearning") {
 		pml = make_shared<QLearning>(sensor->dim(), actor->num(),config);
 	}
+	else if (mlname == "DDQL") {
+
+		pml = DoubleDeepQLearning::makeInstance(config, sensor->dim(), actor->num());
+	}
 	
 	pml->initialize(path, config);
 	return pml;

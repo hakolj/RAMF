@@ -7,6 +7,7 @@
 #include <vector>
 #include "Agent.h"
 #include "Config.h"
+#include "TaskInterface.h"
 class Task {
 public:
 	virtual void getReward(const Agent* const agent, std::vector<double>& reward) = 0;

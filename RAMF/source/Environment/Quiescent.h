@@ -5,6 +5,7 @@ class Quiescent :
 	public InfoAtPointAble
 {
 public:
+	double Lx, Ly, Lz;
 	Quiescent() { return; }
 	void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) {
 		for (unsigned i = 0; i < pos.size(); i++) {
@@ -17,12 +18,12 @@ public:
 
 	}
 	void reset() {}
-	void initialize(const std::string& path, const Config& config) {};
+	void initialize(const std::string& path, const Config& config);
 	void update(double dt) {};
 	virtual std::string boundaryType() { return "PPP"; }
 	inline virtual void getDomainSize(double& Lx, double& Ly, double& Lz) {
-		Lx = 1.0;
-		Ly = 1.0;
-		Lz = 1.0;
+		Lx = this->Lx;
+		Ly = this->Ly;
+		Lz = this->Lz;
 	}
 };

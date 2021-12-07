@@ -26,6 +26,7 @@ protected:
 	double _initRange; //initial position in domainsize
 	int _dimension; //2d or 3d
 	std::shared_ptr<InfoAtPointAble> envInfoAtPoint;
+	double envDomain[3] = { 0,0,0 }; // boundary range of env
 
 public:
 	PointParticle(unsigned agentnum);
@@ -36,6 +37,7 @@ public:
 	virtual void useInfo() = 0;
 	inline virtual void setEnv(std::shared_ptr<Environment> env) {
 		boundaryType = env->boundaryType();
+		env->getDomainSize(envDomain[0], envDomain[1], envDomain[2]);
 		envInfoAtPoint = std::dynamic_pointer_cast<InfoAtPointAble>(env);
 		return;
 	}

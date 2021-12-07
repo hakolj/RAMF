@@ -38,7 +38,7 @@ public:
 };
 TORCH_MODULE(DDQLNet);
 
-class DeepQLearning : public MachineLearning {
+class DoubleDeepQLearning : public MachineLearning {
 public:
 	int actionNum, stateNum;
 	DDQLNet target_net;
@@ -52,13 +52,15 @@ public:
 
 	int copyStep;
 
-	DeepQLearning(int64_t nin, int64_t nmid, int64_t nout);
+	DoubleDeepQLearning(int64_t nin, int64_t nmid, int64_t nout);
 	void copyParam();
+
+	static std::shared_ptr<DoubleDeepQLearning> makeInstance(Config config, int64_t dimState, int64_t numAction);
 
 	virtual void initialize(const std::string& path, const Config& config);
 	virtual std::vector<int> decideAction(const std::vector<std::vector<double>>& state, bool iexplore);
 	virtual void train(Memory* memory);
-	virtual void model_saver(const std::string& path);
+	//virtual void model_saver(const std::string& path);
 	virtual void model_saver(const std::string& path, const std::string& suffix);
 	virtual void model_loader(const std::string& path);
 

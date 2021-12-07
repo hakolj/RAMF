@@ -16,7 +16,7 @@ PointParticle::PointParticle(unsigned agentnum) :
 	uf(vectors3d(agentnum, vec3d::Zero())), ufpf(vectors3d(agentnum, vec3d::Zero())),
 	gradu(vectors3d(agentnum, vec3d::Zero())), gradv(vectors3d(agentnum, vec3d::Zero())), gradw(vectors3d(agentnum, vec3d::Zero())),
 	gradupf(vectors3d(agentnum, vec3d::Zero())), gradvpf(vectors3d(agentnum, vec3d::Zero())), gradwpf(vectors3d(agentnum, vec3d::Zero())),
-	_istep1trans(false), _istep1rot(false), envInfoAtPoint(NULL)
+	_istep1trans(false), _istep1rot(false), envInfoAtPoint(NULL), envDomain()
 {
 }
 

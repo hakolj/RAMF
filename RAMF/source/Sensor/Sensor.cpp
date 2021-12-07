@@ -27,6 +27,7 @@ shared_ptr<Sensor> SensorInitializer(std::string path) {
 	else if (sensorname == "RelaVelocityD") {
 		psensor = make_shared<RelaVelSensorDiscret>();
 	}
+	
 	else if (sensorname == "_EMPTY") {
 		cout << "Sensor type is not defined. Check config file." << endl;
 		exit(0);

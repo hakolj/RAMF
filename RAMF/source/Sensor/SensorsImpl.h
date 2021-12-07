@@ -53,6 +53,8 @@ class RelaPosOrient2DSensor :
 public:
 	vec3d target;
 	RelaPosOrient2DSensor(): target(vec3d::Zero()) {};
+private:
+	bool _setTargetFromTask = false;
 public:
 	virtual inline int dim() const { return 3; }
 	void setTarget(double x, double y) {
@@ -66,8 +68,8 @@ public:
 		vectors3d pos(itf->getPos());
 		vectors3d p3(itf->getP3());
 		for (unsigned i = 0; i < agent->agentnum; i++) {
-			newstate[i][0] = target[0] - pos[i][0];
-			newstate[i][1] = target[1] - pos[i][1];
+			newstate[i][0] = pos[i][0] - target[0];
+			newstate[i][1] = pos[i][1] - target[1];
 			newstate[i][2] = atan2(p3[i][1], p3[i][0]);
 			//newstate[i][0] /= 10;
 			//newstate[i][1] /= 10;
@@ -76,11 +78,21 @@ public:
 
 	}
 	virtual void initialize(const std::string& path, const Config& config) {
-		double x = config.Read<double>("target x");
-		double y = config.Read<double>("target y");
-		setTarget(x, y);
+		_setTargetFromTask = config.Read<bool>("Target From Task", false);
+		if (!_setTargetFromTask) {
+			// from config.txt
+			double x = config.Read<double>("target x");
+			double y = config.Read<double>("target y");
+			setTarget(x, y);
+		}
+
 		return;
 	};
+
+	void reset(std::shared_ptr<Task> task) {
+		if (_setTargetFromTask)	
+			target = std::dynamic_pointer_cast<GetTargetable>(task)->getTarget();
+	}
 
 };
 

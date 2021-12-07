@@ -7,7 +7,7 @@
 using namespace std;
 
 
-DeepQLearning::DeepQLearning(int64_t nin, int64_t nmid, int64_t nout) :
+DoubleDeepQLearning::DoubleDeepQLearning(int64_t nin, int64_t nmid, int64_t nout) :
 	actionNum(nout), stateNum(nin), target_net(DDQLNet(nin, nmid, nout)),
 	eval_net(DDQLNet(nin, nmid, nout)), loss_func(torch::nn::MSELoss()),
 	optimizer(eval_net->parameters(), torch::optim::AdamOptions(0.002)),
@@ -19,7 +19,13 @@ DeepQLearning::DeepQLearning(int64_t nin, int64_t nmid, int64_t nout) :
 
 };
 
-void DeepQLearning::train(Memory* memory) {
+
+std::shared_ptr<DoubleDeepQLearning> DoubleDeepQLearning::makeInstance(Config config, int64_t dimState, int64_t numAction) {
+	int numMid = config.Read<int>("num mid");
+	return std::make_shared<DoubleDeepQLearning>(dimState, numMid, numAction);
+}
+
+void DoubleDeepQLearning::train(Memory* memory) {
 	int req_batch_size = 50;
 
 	vector<vector<double>> state0;
@@ -57,7 +63,7 @@ void DeepQLearning::train(Memory* memory) {
 };
 
 
-std::vector<int> DeepQLearning::decideAction(const std::vector<std::vector<double>>& state, bool iexplore) {
+std::vector<int> DoubleDeepQLearning::decideAction(const std::vector<std::vector<double>>& state, bool iexplore) {
 	vector<int> action(state.size());
 	torch::Tensor stateTensor = TorchAPI::from_vector(state);
 	torch::Tensor actionTensor = get<1>(torch::max(eval_net->forward(stateTensor), 1)); //get max location 
@@ -72,13 +78,13 @@ std::vector<int> DeepQLearning::decideAction(const std::vector<std::vector<doubl
 	return action;
 }
 
-void DeepQLearning::initialize(const std::string& path, const Config& config) {
+void DoubleDeepQLearning::initialize(const std::string& path, const Config& config) {
 	copyStep = 100; // every copyStep replace the parameters of target net
 	_countTrain = 0;
 }
 
 
-void DeepQLearning::model_saver(const std::string& path, const std::string& suffix) {
+void DoubleDeepQLearning::model_saver(const std::string& path, const std::string& suffix) {
 	ofstream testf;
 	testf.open(path + "/evalue_net"+suffix+".pt", ios::out);
 	if (!testf) {
@@ -91,13 +97,13 @@ void DeepQLearning::model_saver(const std::string& path, const std::string& suff
 }
 
 
-void DeepQLearning::model_loader(const std::string& path) {
+void DoubleDeepQLearning::model_loader(const std::string& path) {
 	torch::load(eval_net, path + "/evalue_net.pt");
 	torch::load(target_net, path + "/target_net.pt");
 	return;
 }
 
-void DeepQLearning::recParam(const char* path) {	
+void DoubleDeepQLearning::recParam(const char* path) {	
 	vector<vector<double>> whis = TorchAPI::as2Dvector<double>(target_net->f1->weight.detach());
 	ofstream outfile;
 	string dir(path);
@@ -125,7 +131,7 @@ void DeepQLearning::recParam(const char* path) {
 }
 
 // to clear record file
-void DeepQLearning::clearRec(const char* path) {
+void DoubleDeepQLearning::clearRec(const char* path) {
 	string dir(path);
 	ofstream outfile;
 	outfile.open(dir + "/whis.txt", ios_base::out);
@@ -136,7 +142,7 @@ void DeepQLearning::clearRec(const char* path) {
 	return;
 }
 
-void DeepQLearning::copyParam() {
+void DoubleDeepQLearning::copyParam() {
 	torch::autograd::GradMode::set_enabled(false);
 	auto eval_params = eval_net->named_parameters(true);
 	auto target_params = target_net->named_parameters(true);

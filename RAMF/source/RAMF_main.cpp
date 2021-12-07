@@ -111,6 +111,7 @@ int main()
 		agent->getInfo();
 		agent->useInfo();//ag.convertFrame();
 		task->reset(agent.get());
+		sensor->reset(task);
 		sensor->getState(agent.get(), state); //initial state
 
 		timer.Tic();

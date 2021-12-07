@@ -18,8 +18,8 @@ InertialessSwimmer::InertialessSwimmer(int agentnum, double lda, double a) :
 
 void InertialessSwimmer::initialize(const std::string& path, const Config& config) {
 	double vswim = config.Read("vswim", 0.0);
-	double B = config.Read("B", INFINITY);
-	setMotility(vswim, B);
+	double invB = config.Read("invB", 0);
+	setMotility(vswim, 1.0/invB);
 	double a = config.Read("radius", 0.0);
 	double lda = config.Read("lambda", 1.0);
 	double gravity = config.Read("gravity", 0.0);
@@ -39,14 +39,16 @@ void InertialessSwimmer::initialize(const std::string& path, const Config& confi
 void InertialessSwimmer::reset() {
 	if (_dimension == 2) {
 		initOrient2D();
-		initPos2D(_initRange, _initRange);
+		initPos2D(envDomain[0], envDomain[1]);
+		//initPos2D(_initRange, _initRange);
 		//initPos2DPoint(1.0, 1.0, 2.00);
 
 	}
 	else if (_dimension == 3) {
 		initOrient3D();
 		//initPos3D(2 * M_PI, 2 * M_PI, 2 * M_PI);
-		initPos3D(2  , 2 , 2 );
+		//initPos3D(2  , 2 , 2 );
+		initPos3D(envDomain[0], envDomain[1], envDomain[2]);
 	}
 	resetFlowInfo();
 	return;

@@ -5,8 +5,10 @@
 
 //#include "pch.h"
 #include "Task.h"
-class NavigationPoint :
-	public Task {
+
+class NavigationPoint : 
+	public Task,
+	public GetTargetable {
 public:
 	vec3d target;
 	double bonusrange;
@@ -25,6 +27,10 @@ public:
 	void getReward(const Agent* const agent, std::vector<double>& reward);
 	std::vector<double> getTotalReward(const Agent* agent);
 	void reset(const Agent* agent);
+
+	virtual vec3d getTarget() { return target; };
+
+	
 
 };
 
