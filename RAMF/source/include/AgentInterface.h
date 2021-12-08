@@ -34,6 +34,12 @@ public:
 	virtual vectors3d& swimAngVel() = 0;
 };
 
+class ChangeJumpVelAble {
+public:
+	virtual std::vector<double>& jumpTime() = 0;
+
+};
+
 #endif // !AGENTITF_H
 
 

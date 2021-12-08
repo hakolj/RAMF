@@ -6,20 +6,23 @@
 using namespace std;
 InertialessSwimmer::InertialessSwimmer(int agentnum, double lda, double a) :
 	PointParticle(agentnum), lda(lda), a(a),
-	vswim(vector<double>(agentnum)), gyro(vector<double>(agentnum)),
+	vswim(vector<double>(agentnum)), gyro(vector<double>(agentnum)),vjump(0.0),tjump(0.0),
 	vsettle(vec3d::Zero()),
 	mdisp(vectors3d(agentnum, vec3d::Zero())), eg(0.0, -1.0, 0.0),
 	_Lda((lda* lda - 1) / (lda * lda + 1)), _rhop(0), _rhof(0), _nu(0), _gravity(0),
 	iFluidInertTorq(true), _Mi(0),
-	_swimAngVel(vectors3d(agentnum,vec3d::Zero()))
+	_swimAngVel(vectors3d(agentnum,vec3d::Zero())),tjump_now(agentnum,0)
 {
 	return;
 }
 
 void InertialessSwimmer::initialize(const std::string& path, const Config& config) {
-	double vswim = config.Read("vswim", 0.0);
-	double invB = config.Read("invB", 0);
-	setMotility(vswim, 1.0/invB);
+	//InitSenseStepCount(config);
+	double vswim = config.Read<double>("vswim", 0.0);
+	double vjump = config.Read<double>("vjump", 0.0);
+	tjump = config.Read<double>("tjump", 0);
+	double invB = config.Read<double>("invB", 0);
+	setMotility(vswim, 1.0 / invB, vjump);
 	double a = config.Read("radius", 0.0);
 	double lda = config.Read("lambda", 1.0);
 	double gravity = config.Read("gravity", 0.0);
@@ -54,12 +57,13 @@ void InertialessSwimmer::reset() {
 	return;
 }
 
-void InertialessSwimmer::setMotility(double vswim, double B) {
+void InertialessSwimmer::setMotility(double vswim, double B, double vjump) {
 	for (unsigned i = 0; i < agentnum; i++) {
 		const vec3d defalut_mdisp(0.0, 0.0, -1.0);
 		this->vswim[i] = vswim;
 		this->gyro[i] = 0.5 / B;
 		this->mdisp[i] = defalut_mdisp;
+		this->vjump = vjump;
 	}
 }
 
@@ -105,7 +109,24 @@ void InertialessSwimmer::update(double timestep) {
 		vppf = ufpf[i] + setvel;
 		
 		/*cout << setvel << endl;*/
-		vppf[2] += vswim[i];
+		//jumping velocity according to Ardeshiri et al. 2016
+		// when jump start, tjump_now = 1. Then tjump_now decrease to 0. This corresponds to _vjump = vjump*exp(0) to vjump* exp(-log(100))
+		// decrease rate = timestep / (tjump * log(100.))
+		double _vjump = 0;
+		if ((tjump > 0) && (tjump_now[i] > 0)) {
+			_vjump = vjump * exp((tjump_now[i] - 1) * log(100.0)); // final vjump  = 1/100 vjump max
+			tjump_now[i] -= timestep / (tjump * log(100.0));
+
+		}
+
+
+		//if (tjump_now[i] < tjump * log(100.0)) {
+		//	_vjump = vjump * exp(-tjump_now[i] / tjump); // final vjump  = 1/100 vjump max
+		//}
+		
+
+
+		vppf[2] += vswim[i] + _vjump;  // adding jumping velocity
 		_updateTrans(i, vppf, timestep);
 
 		//rotation
@@ -274,3 +295,11 @@ void InertialessSwimmer::setInertialTorqueConst() {
 	this->_Mi = iFluidInertTorq ? _solveMi(this->lda) : 0.0;
 	return;
 }
+
+//double& InertialessSwimmer::jumpTime(const int idx) {
+//	return tjump_now[i];
+//	for (int i = 0; i < agentnum; i++) {
+//		if (tjump_now[i] <= 0) tjump_now[i] = newtjump[i];
+//	}
+//	
+//}

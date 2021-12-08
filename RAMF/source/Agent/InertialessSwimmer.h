@@ -8,7 +8,8 @@
 class InertialessSwimmer : 
 	public PointParticle, 	
 	public ChangeMassCenterAble,
-	public ChangeSwimVelAble
+	public ChangeSwimVelAble,
+	public ChangeJumpVelAble
 {
 public:
 
@@ -25,6 +26,8 @@ protected:
 	//aspect ratio & radius
 	double lda, a; 
 	std::vector<double> vswim, gyro;
+	double vjump, tjump; // maximal jumping velocity, jump duration time
+	std::vector<double> tjump_now;
 	vec3d vsettle;
 	vectors3d mdisp; //mass center displacement
 	vectors3d _swimAngVel; //active swimming angular velocity
@@ -50,7 +53,7 @@ public:
 		_Lda = (lda * lda - 1) / (lda * lda + 1);
 		return;
 	};
-	void setMotility(double vswim, double B);
+	void setMotility(double vswim, double B, double vjump0 = 0.0);
 	void setVsettle();
 	void convertFrame();
 
@@ -63,6 +66,7 @@ public:
 	inline vectors3d getMassCenter() const { return mdisp; }
 	inline void setSwimVel(const std::vector<double>& newvswim) { vswim = newvswim; }
 	inline vectors3d& swimAngVel() { return _swimAngVel; }
+	inline virtual std::vector<double>& jumpTime() { return tjump_now; };
 
 public:
 	// return the F_{\beta}, used for calculating fluid inertia constant
@@ -70,6 +74,7 @@ public:
 	double _solveMi(double lda);
 	// setting fluid inertial torque constant Mi
 	void setInertialTorqueConst();
+	
 
 };
 

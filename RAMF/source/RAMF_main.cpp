@@ -128,6 +128,7 @@ int main()
 			}
 
 			agent->update(smanager.timestepsize);
+			//agent->UpdateSenseStepCount();
 			agent->BoundaryCondition(env);
 			env->update(smanager.timestepsize);
 			agent->getInfo();

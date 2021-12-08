@@ -30,3 +30,12 @@ shared_ptr<Agent> AgentInitializer(const std::string& path) {
 	cout << "Agent: " << agentname << " created." << endl;
 	return pagent;
 }
+
+//void Agent::InitSenseStepCount(const Config& config) {
+//	senseStep = config.Read<int>("sense step", 1);
+//}
+
+Agent::Agent(unsigned agentnum) :agentnum(agentnum) {};
+//bool Agent::ReadyToSense(int idx) {
+//	return (senseStepCount[idx] % senseStep) == 0;
+//}
