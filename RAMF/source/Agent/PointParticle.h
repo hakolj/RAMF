@@ -19,6 +19,7 @@ public:
 	std::string boundaryType;
 
 protected:
+	double lda, a;
 	vectors3d uf, ufpf; //fluid velocity at agent position
 	vectors3d gradu, gradv, gradw; //fluid gradients
 	vectors3d gradupf, gradvpf, gradwpf;

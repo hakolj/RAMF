@@ -177,7 +177,7 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 	else if (storeType == FieldStoreType::CEC) {
 		double baseyy[3]{}; // used for interp of v
 		int m = (jc < Ny / 2.0) ? jc + 1 : jc; // middle index of yc
-		Lag2Bases(pos(1), sclx.ms.y(m-1), sclx.ms.y(m), sclx.ms.y(m + 1), baseyy); // used only for interp of v
+		Lag2Bases(pos(1), scly.ms.y(m-1), scly.ms.y(m), scly.ms.y(m + 1), baseyy); // used only for interp of v
 
 		for (int i = -1; i <= 1; ++i) {
 			for (int j = -1; j <= 1; ++j) {

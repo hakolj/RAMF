@@ -49,12 +49,23 @@ extern void performanceTest() {
 	env->update(1.0);
 
 
-	shared_ptr<LoadedFlow> hit = dynamic_pointer_cast<LoadedFlow>(env);
-	cout << hit->datapool.upool[0](1, 2, 1) << endl;
+	shared_ptr<LoadedFlow> flow = dynamic_pointer_cast<LoadedFlow>(env);
+	//cout << flow->datapool.upool[0](1, 2, 1) << endl;
 
+	string path = "D:\\Homework\\Y4-1\\2021-09-07-RAMF_cmake\\work\\outputgrad\\";
+	flow->reset();
+	flow->makeGradient();
+	flow->dudx.FileIO(path.c_str(), "dudx", 'w');
+	flow->dudy.FileIO(path.c_str(), "dudy", 'w');
+	flow->dudz.FileIO(path.c_str(), "dudz", 'w');
 
+	flow->dvdx.FileIO(path.c_str(), "dvdx", 'w');
+	flow->dvdy.FileIO(path.c_str(), "dvdy", 'w');
+	flow->dvdz.FileIO(path.c_str(), "dvdz", 'w');
 
-
+	flow->dwdx.FileIO(path.c_str(), "dwdx", 'w');
+	flow->dwdy.FileIO(path.c_str(), "dwdy", 'w');
+	flow->dwdz.FileIO(path.c_str(), "dwdz", 'w');
 
 
 
@@ -85,28 +96,28 @@ extern void performanceTest() {
 
 
 
-	timer.Tic();
-	for (int i = 0; i < 1000000; i++) {
-		vec3d temppos;
-		temppos = Matrix<double, 3, 1>::Random();
-		temppos[0] += 1;
-		temppos[1] += 1;
-		temppos[2] += 1;
+	//timer.Tic();
+	//for (int i = 0; i < 1000000; i++) {
+	//	vec3d temppos;
+	//	temppos = Matrix<double, 3, 1>::Random();
+	//	temppos[0] += 1;
+	//	temppos[1] += 1;
+	//	temppos[2] += 1;
 
-	
-		//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+	//
+	//	//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
 
-		hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CEC);
-		hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
-		if ((uf2 - uf).maxCoeff() > 1e-14) { 
-			cout << uf2 - uf << endl; 
-			//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
-			//hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CCC);
-		}
+	//	flow->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CEC);
+	//	flow->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+	//	if ((uf2 - uf).maxCoeff() > 1e-14) { 
+	//		cout << uf2 - uf << endl; 
+	//		//hit->interpolater.interp3d_old(temppos, *(hit->u), *hit->v, *hit->w, uf);
+	//		//hit->interpolater.interp3d(temppos, *(hit->u), *hit->v, *hit->w, uf2, FieldStoreType::CCC);
+	//	}
 
-	}
-	timer.Toc();
-	cout << "new interp" << timer.elaspe() << endl;
+	//}
+	//timer.Toc();
+	//cout << "new interp" << timer.elaspe() << endl;
 	
 
 

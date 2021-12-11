@@ -9,6 +9,7 @@
 
 PointParticle::PointParticle(unsigned agentnum) :
 	Agent(agentnum), pos(vectors3d(agentnum, vec3d::Zero())),
+	lda(lda), a(a),
 	ee(vectors4d(agentnum, vec4d::Zero())), p1(vectors3d(agentnum, vec3d::Zero())),
 	p2(vectors3d(agentnum, vec3d::Zero())), p3(vectors3d(agentnum, vec3d::Zero())),
 	vp_new(vectors3d(agentnum, vec3d::Zero())), vp_old(vectors3d(agentnum, vec3d::Zero())),
@@ -181,6 +182,8 @@ void PointParticle::_updateRot(int i, const vec3d& angvel, double timestep) {
 	double nee = ee[i].norm();
 	ee[i] /= nee;
 	ee2R(ee[i], p1[i], p2[i], p3[i]); //update particle axis direction
+
+
 	return;
 }
 
@@ -196,12 +199,12 @@ void PointParticle::BoundaryCondition(std::shared_ptr<Environment> env) {
 		//loop for three dims
 		for (int dim = 0; dim < 3; dim++) {
 			if (bc[dim] == 'W') {				
-				if (pos[i](dim) < 0.0) {
-					pos[i](dim) = -pos[i](dim);
+				if (pos[i](dim) < this->a) {
+					pos[i](dim) = 2 * this->a - pos[i](dim);
 					vp_new[i](dim) *= -1;
 				}
-				if (pos[i](dim) > L[dim]) {
-					pos[i](dim) = L[dim] - (pos[i](dim) - L[dim]);
+				if (pos[i](dim) > L[dim] - this->a) {
+					pos[i](dim) = 2 * (L[dim] - this->a) - pos[i](dim);
 					vp_new[i](dim) *= -1;
 				}
 

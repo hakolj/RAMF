@@ -240,7 +240,8 @@ void Scalar::GradientAtCenter_old(Scalar& gradx, Scalar& grady, Scalar& gradz) c
 }
 
 
-//using cell-centered scalar to compute Gradient at center. 2nd order centerd difference. Uniform mesh.
+//using compute Gradient at grid center. 2nd order centerd difference.
+//Only availabel for scalar stored at center (C) or the surface of grid in Y direction (E)
 void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const char storeType) const {
 	//for periodic boundary
 	//for (int j = 0; j <= Ny; j++) {
@@ -280,7 +281,7 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 					ms.ipx(i, j, k, ip, jp, kp);
 
 					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
-					grady(i, j, k) = (q_[jp] - q_[j]) / ms.dy(j);
+					grady(i, j, k) = (q_[jp] - q_[ms.idx(i, j, k)]) / ms.dy(j);
 					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));
 #if DEBUG
 					if (isinf(grady(i, j, k))) {

@@ -38,9 +38,9 @@ void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gra
 		//interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn]);
 
 		interpolater.interp3d(temppos, *u, *v, *w, uf[pn], fieldstore);
-		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn], fieldstore);
-		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], fieldstore);
-		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], fieldstore);
+		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn], FieldStoreType::CCC);
+		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], FieldStoreType::CCC);
+		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], FieldStoreType::CCC);
 		//interpolater.interp3d_old(temppos, *u, *v, *w, uf[pn]);
 		//interpolater.interp3d_old(temppos, dudx, dudy, dudz, gradu[pn]);
 		//interpolater.interp3d_old(temppos, dvdx, dvdy, dvdz, gradv[pn]);
@@ -100,7 +100,7 @@ void LoadedFlow::initialize(const std::string& path, const Config& config) {
 	flowfieldpath = flowfieldpath + "/";
 
 	datapool.LoadData(ms, flowfieldpath,indexlist); //load flow data to datapool
-	loadFlowData(indexlist[0]);
+	loadFlowData(0);
 	return;
 }
 

@@ -24,7 +24,7 @@ protected:
 	//fluid inertial torque const
 	double _Mi; 
 	//aspect ratio & radius
-	double lda, a; 
+	
 	std::vector<double> vswim, gyro;
 	double vjump, tjump; // maximal jumping velocity, jump duration time
 	std::vector<double> tjump_now;

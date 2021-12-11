@@ -44,21 +44,21 @@ set(CMAKE_SHARE_LINKER_FLAGS "${CMAKE_SHARE_LINKER_FLAGS} ${OpenMP_SHARE_LINKER_
 
 # torchlib
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     set(TorchPath /home/qjr/mydata/torchlib-cpu-linux/libtorch/share/cmake/Torch)
 
-    elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
     set(TorchPath /home/qjr/mydata/torchlib-cpu-linux/libtorch/share/cmake/Torch)
     endif()
 
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     set(TorchPath D:/Homework/Y4-1/2021-09-07-RAMF_cmake/libtorch-release/libtorch/share/cmake/Torch)
 
-    elseif (${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
     set(TorchPath D:/Homework/Y4-1/2021-09-07-RAMF_cmake/libtorch-release/libtorch/share/cmake/Torch)
 
-    elseif (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     set(TorchPath D:/Homework/Y4-1/2021-09-07-RAMF_cmake/libtorch-debug/libtorch/share/cmake/Torch)
     endif()
 endif()

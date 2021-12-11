@@ -5,7 +5,7 @@
 
 using namespace std;
 InertialessSwimmer::InertialessSwimmer(int agentnum, double lda, double a) :
-	PointParticle(agentnum), lda(lda), a(a),
+	PointParticle(agentnum), 
 	vswim(vector<double>(agentnum)), gyro(vector<double>(agentnum)),vjump(0.0),tjump(0.0),
 	vsettle(vec3d::Zero()),
 	mdisp(vectors3d(agentnum, vec3d::Zero())), eg(0.0, -1.0, 0.0),
@@ -102,6 +102,8 @@ void InertialessSwimmer::update(double timestep) {
 	vec3d t_gyro(3, 1), t_rotate(3, 1), t_deform(3, 1), angvel(3, 1);
 	vec3d t_finert(3, 1);
 	vec3d vslippf(3, 1);
+
+//#pragma omp parallel for
 	for (unsigned i = 0; i < agentnum; i++) {
 		egpf = vec2vecpf(eg, p1[i], p2[i], p3[i]);
 		// translation		
@@ -147,10 +149,13 @@ void InertialessSwimmer::update(double timestep) {
 		t_finert[1] = _Mi / _nu * vslippf[0] * vslippf[2];
 		t_finert[2] = 0.0;
 
+		//t_deform = vec3d::Zero();
+		//t_rotate = vec3d::Zero();
 		angvel = t_gyro + t_rotate + t_deform + t_finert + _swimAngVel[i];
+		//angvel = vec3d::Zero();
 
 		_updateRot(i, angvel, timestep);
-
+		//cout << p3[i][0] <<" "<< p3[i][1]<<" "<< p3[i][2] << endl;
 		if (isnan(pos[0](0))) {
 			cout << "nan value in inertialess swimmers update" << endl;
 		}
@@ -165,7 +170,11 @@ void InertialessSwimmer::update(double timestep) {
 // dump particle field
 void InertialessSwimmer::dump(const char* path, int step) {
 	ofstream os;
-	string fullpath = string(path) + "/partfield.txt";
+
+	char stepstr[10];
+	cout << "dumping step " << step << endl;
+	sprintf(stepstr, "%.7i", step);
+	string fullpath = string(path) + "/partfield" + string(stepstr) + ".txt";
 	os.open(fullpath, ios::out | ios::trunc);
 	os.precision(8);
 	os << scientific;
@@ -179,7 +188,7 @@ void InertialessSwimmer::dump(const char* path, int step) {
 	os.close();
 
 	FILE* fp;
-	fullpath = string(path) + "/partfield.bin";
+	fullpath = string(path) + "/partfield" + string(stepstr) + ".bin";
 	fp = fopen(fullpath.c_str(), "wb");
 	for (unsigned i = 0; i < agentnum; i++) {
 		fwrite(&pos[i][0], sizeof(double), 3, fp);
