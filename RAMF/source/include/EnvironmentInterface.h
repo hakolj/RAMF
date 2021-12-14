@@ -6,7 +6,7 @@
 
 class InfoAtPointAble {
 public:
-	virtual void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) = 0;
+	virtual void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const = 0;
 };
 
 #endif // !ENVIRONMENTITF_H

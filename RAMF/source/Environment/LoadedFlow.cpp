@@ -20,10 +20,22 @@ LoadedFlow::LoadedFlow(const Mesh& ms) :
 	return;
 }
 
-void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) {
+void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const {
+
+
+
 #pragma omp parallel for
 	for (int pn = 0; pn < pos.size(); pn++) {
 		vec3d temppos;
+		//temppos[0] = fmod(pos[pn][0], ms.Lx);
+		//temppos[1] = fmod(pos[pn][1], ms.Ly);
+		//temppos[2] = fmod(pos[pn][2], ms.Lz);
+		////cout << temppos << endl;
+		//temppos[0] = fmod(temppos[0] + ms.Lx, ms.Lx);
+		//temppos[1] = fmod(temppos[1] + ms.Ly, ms.Ly);
+		//temppos[2] = fmod(temppos[2] + ms.Lz, ms.Lz);
+
+
 		temppos[0] = fmod(pos[pn][0], ms.Lx);
 		temppos[1] = fmod(pos[pn][1], ms.Ly);
 		temppos[2] = fmod(pos[pn][2], ms.Lz);
@@ -41,11 +53,14 @@ void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gra
 		interpolater.interp3d(temppos, dudx, dudy, dudz, gradu[pn], FieldStoreType::CCC);
 		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], FieldStoreType::CCC);
 		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], FieldStoreType::CCC);
+
 		//interpolater.interp3d_old(temppos, *u, *v, *w, uf[pn]);
 		//interpolater.interp3d_old(temppos, dudx, dudy, dudz, gradu[pn]);
 		//interpolater.interp3d_old(temppos, dvdx, dvdy, dvdz, gradv[pn]);
 		//interpolater.interp3d_old(temppos, dwdx, dwdy, dwdz, gradw[pn]);
 	}
+
+
 
 
 }

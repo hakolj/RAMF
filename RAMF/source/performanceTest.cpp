@@ -45,8 +45,8 @@ extern void performanceTest() {
 	//shared_ptr<Sensor> sensor = SensorInitializer(configpath);
 	//shared_ptr<Actor> actor = ActorInitializer(configpath);
 
-	env->reset();
-	env->update(1.0);
+	//env->reset();
+	//env->update(1.0);
 
 
 	shared_ptr<LoadedFlow> flow = dynamic_pointer_cast<LoadedFlow>(env);
@@ -54,7 +54,13 @@ extern void performanceTest() {
 
 	string path = "D:\\Homework\\Y4-1\\2021-09-07-RAMF_cmake\\work\\outputgrad\\";
 	flow->reset();
-	flow->makeGradient();
+	flow->update(1.0);
+	flow->update(1.0);
+	//flow->makeGradient();
+	flow->u->FileIO(path.c_str(), "u", 'w');
+	flow->v->FileIO(path.c_str(), "v", 'w');
+	flow->w->FileIO(path.c_str(), "w", 'w');
+
 	flow->dudx.FileIO(path.c_str(), "dudx", 'w');
 	flow->dudy.FileIO(path.c_str(), "dudy", 'w');
 	flow->dudz.FileIO(path.c_str(), "dudz", 'w');

@@ -38,6 +38,7 @@ public:
 	int sensestep;
 	int learnstep;
 	int totalstep;
+	int dumpstep;
 	double timestepsize;
 	int episodenum;
 	int saveinterval; //episode interval of saving training

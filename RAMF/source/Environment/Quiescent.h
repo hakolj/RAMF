@@ -7,7 +7,7 @@ class Quiescent :
 public:
 	double Lx, Ly, Lz;
 	Quiescent() { return; }
-	void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) {
+	void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const {
 		for (unsigned i = 0; i < pos.size(); i++) {
 			uf[i] = vec3d::Zero();
 			gradu[i] = vec3d::Zero();

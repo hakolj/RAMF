@@ -262,7 +262,9 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 					ms.imx(i, j, k, im, jm, km);
 					int ip, jp, kp;
 					ms.ipx(i, j, k, ip, jp, kp);
-
+					double qjp = q_[jp];
+					double qjm = q_[jm];
+			
 					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
 					grady(i, j, k) = (q_[jp] - q_[jm]) / (ms.hy(j) + ms.hy(j + 1));
 					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));

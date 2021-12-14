@@ -50,7 +50,7 @@ private:
 public:
 	virtual void initialize(const std::string& path, const Config& config);
 	virtual void reset();
-	virtual void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw);
+	virtual void infoAtPoint (const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const;
 	virtual void update(double dt);
 	virtual std::string boundaryType() { return _boundaryType; }
 	inline virtual void getDomainSize(double& Lx, double& Ly, double& Lz) { Lx = this->Lx; Ly = this->Ly; Lz = this->Lz; }

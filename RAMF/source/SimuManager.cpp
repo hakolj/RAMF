@@ -22,7 +22,7 @@ qvalue_record(std::vector<double>(0)){
 	learnstep = config.Read<int>("learn step");
 	totalstep = config.Read<int>("total step");
 	timestepsize = config.Read<double>("time step");
-
+	dumpstep = config.Read<int>("dump step", totalstep);
 	episodenum = config.Read<int>("episode num");
 	saveinterval = config.Read<int>("save interval"); //episode interval of saving training
 	ilearn = config.Read<bool>("ilearn");

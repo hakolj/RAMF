@@ -13,7 +13,7 @@ private:
 
 public:
 	TaylorGreenVortex(double _uscale = 1.0, double _lscale = 1.0);
-	void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw);
+	void infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const;
 	void reset(){}
 	void initialize(const std::string& path, const Config& config);
 	inline double uscale() { return _uscale; }

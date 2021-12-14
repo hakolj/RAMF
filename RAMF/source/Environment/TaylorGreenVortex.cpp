@@ -6,7 +6,7 @@
 using namespace std;
 
 TaylorGreenVortex::TaylorGreenVortex(double _uscale, double _lscale) :_uscale(_uscale), _lscale(_lscale) {}
-void TaylorGreenVortex::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) {
+void TaylorGreenVortex::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const {
 	if ((pos.size() != uf.size()) | (pos.size() != gradu.size()) | (pos.size() != gradv.size()) | (pos.size() != gradw.size())) {
 		cerr << "Vectors size mismatch. Check TaylorGreenVortex::getInfo." << endl;
 	}
