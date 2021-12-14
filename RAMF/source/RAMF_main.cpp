@@ -32,7 +32,7 @@ int main()
 
 
 	bool ilearn = true;
-	omp_set_num_threads(16);
+	omp_set_num_threads(6);
 
 #pragma omp parallel
 	std::cout << "omp thread: " << omp_get_thread_num() << "\n" << endl;
@@ -98,6 +98,7 @@ int main()
 	else {
 		//if (ilearn) ddql.clearRec(smanager.workingDir.c_str());
 	}
+	
 	//----------------------- main roop ---------------------------------------//
 	//ml.copyParam();
 	for (int episode = startepisode; episode < smanager.episodenum+startepisode; episode++) {
@@ -155,6 +156,11 @@ int main()
 					trajs[j].recordp3(agentKine->getP3()[j]);
 					trajs[j].recordpos(agentKine->getPos()[j]);
 				}
+
+				// dump agent info
+				if ((i + 1) % smanager.dumpstep == 0) {
+					agent->dump(smanager.workingDir.c_str(), i+1);
+				}
 			}
 
 
@@ -199,10 +205,10 @@ int main()
 
 		
 	}
-	agent->dump(smanager.workingDir.c_str(), smanager.totalstep);
+	
 
 	for (unsigned i = 0; i < trajs.size(); i++) {
-		trajs[i].writeTraj(smanager.workingDir + std::to_string(i) + ".txt");
+		trajs[i].writeTraj(smanager.workingDir + "/" + std::to_string(i) + ".txt");
 	}
 
 

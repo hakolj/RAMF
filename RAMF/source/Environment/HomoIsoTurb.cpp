@@ -17,7 +17,7 @@ HomoIsoTurb::HomoIsoTurb(const Mesh& ms) :
 	return;
 }
 
-void HomoIsoTurb::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw){
+void HomoIsoTurb::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gradu, vectors3d& gradv, vectors3d& gradw) const {
 	for (int pn = 0; pn < pos.size(); pn++) {
 		vec3d temppos;
 		temppos[0] = fmod(pos[pn][0], ms.Lx);

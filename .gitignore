@@ -16,4 +16,5 @@ _deps
 !.gitignore
 #self defined
 .vs/
+out/
 

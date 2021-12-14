@@ -182,7 +182,10 @@ void InertialessSwimmer::dump(const char* path, int step) {
 		os << pos[i][0] << " " << pos[i][1] << " " << pos[i][2] << " " <<
 			p3[i][0] << " " << p3[i][1] << " " << p3[i][2] << " " <<
 			vp_new[i][0] << " " << vp_new[i][1] << " " << vp_new[i][2] << " " <<
-			uf[i][0] << " " << uf[i][1] << " " << uf[i][2];
+			uf[i][0] << " " << uf[i][1] << " " << uf[i][2] << " " <<
+			gradu[i][0] << " " << gradu[i][1] << " " << gradu[i][2] << " " <<
+			gradv[i][0] << " " << gradv[i][1] << " " << gradv[i][2] << " " <<
+			gradw[i][0] << " " << gradw[i][1] << " " << gradw[i][2];
 		os << endl;
 	}
 	os.close();
@@ -195,6 +198,10 @@ void InertialessSwimmer::dump(const char* path, int step) {
 		fwrite(&p3[i][0], sizeof(double), 3, fp);
 		fwrite(&vp_new[i][0], sizeof(double), 3, fp);
 		fwrite(&uf[i][0], sizeof(double), 3, fp);
+		fwrite(&gradu[i][0], sizeof(double), 3, fp);
+		fwrite(&gradv[i][0], sizeof(double), 3, fp);
+		fwrite(&gradw[i][0], sizeof(double), 3, fp);
+
 	}
 	fclose(fp);
 }
