@@ -123,15 +123,19 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 	info = vec3d::Zero();
 
 	if (storeType == FieldStoreType::CCC) {
+#ifdef DEBUG
+		if (jc == Ny - 1) {
+			std::cout << "here" << std::endl;
+		}
+#endif
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
 				for (int k = 0; k < 3; ++k) {
 					//double mult1 = basex[i] * basey[j] * basez[k];
 					//mult1 = c1 * c2 * c3;
-					if (jc == 1) {
-						std::cout << "here" << std::endl;
-					}
+
 					int idx = sclx.ms.idx(id[i], jd[j], kd[k]);
+					double temp = scly[idx];
 					info[0] += sclx[idx] * basex[i] * basey[j] * basez[k];
 					info[1] += scly[idx] * basex[i] * basey[j] * basez[k];
 					info[2] += sclz[idx] * basex[i] * basey[j] * basez[k];
@@ -141,7 +145,7 @@ void Lag2nd3D::interp3d(const vec3d& pos, const Scalar& sclx, const Scalar& scly
 			}
 		}
 	}
-	else if (storeType == FieldStoreType::CEC) {
+	else if (storeType == FieldStoreType::CYC) {
 		double baseyy[3]{}; // used for interp of v
 		int m = (jc < Ny / 2.0) ? jc + 1 : jc; // middle index of yc
 		int jdym[3]{ sclx.ms.jma(m), m, sclx.ms.jpa(m) };

@@ -54,6 +54,10 @@ void LoadedFlow::infoAtPoint(const vectors3d& pos, vectors3d& uf, vectors3d& gra
 		interpolater.interp3d(temppos, dvdx, dvdy, dvdz, gradv[pn], FieldStoreType::CCC);
 		interpolater.interp3d(temppos, dwdx, dwdy, dwdz, gradw[pn], FieldStoreType::CCC);
 
+		//gradv[pn][0] = 0;
+		//gradv[pn][1] = 0;
+		//gradv[pn][2] = 0;
+
 		//interpolater.interp3d_old(temppos, *u, *v, *w, uf[pn]);
 		//interpolater.interp3d_old(temppos, dudx, dudy, dudz, gradu[pn]);
 		//interpolater.interp3d_old(temppos, dvdx, dvdy, dvdz, gradv[pn]);
@@ -102,8 +106,8 @@ void LoadedFlow::initialize(const std::string& path, const Config& config) {
 	else if (_fieldStoreStr == "CCC") {
 		fieldstore = FieldStoreType::CCC;
 	}
-	else if (_fieldStoreStr == "CEC") {
-		fieldstore = FieldStoreType::CEC;
+	else if (_fieldStoreStr == "CYC") {
+		fieldstore = FieldStoreType::CYC;
 	}
 
 	if (fieldstore == FieldStoreType::UDF) {
@@ -231,6 +235,7 @@ void LoadedFlow::makeGradient() {
 	u->GradientAtCenter(dudx, dudy, dudz, _fieldStoreStr[0]);
 	v->GradientAtCenter(dvdx, dvdy, dvdz, _fieldStoreStr[1]);
 	w->GradientAtCenter(dwdx, dwdy, dwdz, _fieldStoreStr[2]);
+	makeGradientBoundary();
 	return;
 }
 
@@ -251,4 +256,63 @@ void LoadedFlow::update(double dt) {
 	if (_flowIndexCount % 10 == 0)	cout << indexlist[_flowIndexCount] << " ";
 
 	return;
+}
+
+void LoadedFlow::makeGradientBoundary() {
+	// only make boundary for velocity grads. 
+	// Boundary of velocity field is ensured by the loaded data
+	// velocity must be stored as CCC or CYC
+
+	// x direction
+	if (_boundaryType[0] == 'W') {
+		//to be done
+	}
+	else if (_boundaryType[0] == 'P') {
+		// no need to deal with boundary because the index system will not refer to boundary points
+
+
+	}
+
+	// y direction
+
+	if (_boundaryType[1] == 'W') {
+#pragma omp parallel for
+		for (int k = 1; k <= Nz - 1; k++) {
+			for (int i = 1; i <= Nx - 1; i++) {
+
+				//extrapolation
+				dudy(i, 0, k) = dudy(i, 1, k) - (dudy(i, 2, k) - dudy(i, 1, k)) / dudy.ms.hy(2) * dudy.ms.hy(1);
+				dvdy(i, 0, k) = 0.0;
+				dwdy(i, 0, k) = dwdy(i, 1, k) - (dwdy(i, 2, k) - dwdy(i, 1, k)) / dwdy.ms.hy(2) * dwdy.ms.hy(1);
+
+
+				dudy(i, Ny, k) = dudy(i, Ny - 1, k) + (dudy(i, Ny - 1, k) - dudy(i, Ny - 2, k)) / dudy.ms.hy(Ny - 1) * dudy.ms.hy(Ny);
+				dvdy(i, Ny, k) = 0.0;
+				dwdy(i, Ny, k) = dwdy(i, Ny - 1, k) + (dwdy(i, Ny - 1, k) - dwdy(i, Ny - 2, k)) / dwdy.ms.hy(Ny - 1) * dwdy.ms.hy(Ny);
+
+				//dudy(i, 0, k) = (*u)(i, 1, k) / (u->ms.dy(1) / 2.0);
+				//dwdy(i, 0, k) = (*w)(i, 1, k) / (w->ms.dy(1) / 2.0);
+
+				//dudy(i, Ny, k) = -(*u)(i, Ny - 1, k) / (u->ms.dy(Ny - 1) / 2.0);
+				//dwdy(i, Ny, k) = -(*w)(i, Ny - 1, k) / (w->ms.dy(Ny - 1) / 2.0);
+
+
+			}
+		}
+	}
+	else if (_boundaryType[1] == 'P') {
+		// no need to deal with boundary because the index system will not refer to boundary points
+
+	}
+
+	// x direction
+	if (_boundaryType[2] == 'W') {
+		//to be done
+	}
+	else if (_boundaryType[2] == 'P') {
+		// no need to deal with boundary because the index system will not refer to boundary points
+
+
+	}
+
 }

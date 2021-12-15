@@ -9,7 +9,7 @@
 enum FieldStoreType {
 	UDF = 0, //undefined
 	CCC = 1, //Center-Center-Center: uvw stored at the center of grid
-	CEC = 2 // Center-Edge-Center: uw stored at the center of grid, v at the center of surface in y direction
+	CYC = 2 // Center-Edge-Center: uw stored at the center of grid, v at the center of surface in y direction
 };
 
 

@@ -241,7 +241,7 @@ void Scalar::GradientAtCenter_old(Scalar& gradx, Scalar& grady, Scalar& gradz) c
 
 
 //using compute Gradient at grid center. 2nd order centerd difference.
-//Only availabel for scalar stored at center (C) or the surface of grid in Y direction (E)
+//Only availabel for scalar stored at center (C) or the surface of grid in Y direction (Y)
 void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const char storeType) const {
 	//for periodic boundary
 	//for (int j = 0; j <= Ny; j++) {
@@ -264,7 +264,7 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 					ms.ipx(i, j, k, ip, jp, kp);
 					double qjp = q_[jp];
 					double qjm = q_[jm];
-			
+					double* temp = q_;
 					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
 					grady(i, j, k) = (q_[jp] - q_[jm]) / (ms.hy(j) + ms.hy(j + 1));
 					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));
@@ -272,8 +272,8 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 			}
 		}
 	}
-	else if (storeType == 'E') {
-//#pragma omp parallel for
+	else if (storeType == 'Y') {
+#pragma omp parallel for
 		for (int j = 1; j <= Ny - 1; j++) {
 			for (int k = 1; k <= Nz - 1; k++) {
 				for (int i = 1; i <= Nx - 1; i++) {
@@ -282,9 +282,22 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 					int ip, jp, kp;
 					ms.ipx(i, j, k, ip, jp, kp);
 
-					gradx(i, j, k) = (q_[ip] - q_[im]) / (ms.hx(i) + ms.hx(i + 1));
+
+					int im2, jm2, km2;
+					int ip2, jp2, kp2;
+					ms.imx(i, j+1, k, im2, jm2, km2);
+					ms.ipx(i, j+1, k, ip2, jp2, kp2);
+
+					//    i    i+1
+					// j+1|----|
+					//    |    |  j
+					// j  |----|
+					// must use (i +- 1, j, k) and (i +-1, j+1, k) to calculate the gradient of v (store at grid surface) at grid center
+
+
+					gradx(i, j, k) = (q_[ip] + q_[ip2] - q_[im] - q_[im2]) / (ms.hx(i) + ms.hx(i + 1)) / 2; 
 					grady(i, j, k) = (q_[jp] - q_[ms.idx(i, j, k)]) / ms.dy(j);
-					gradz(i, j, k) = (q_[kp] - q_[km]) / (ms.hz(k) + ms.hz(k + 1));
+					gradz(i, j, k) = (q_[kp] + q_[kp2] - q_[km] - q_[km2]) / (ms.hz(k) + ms.hz(k + 1)) / 2;
 #if DEBUG
 					if (isinf(grady(i, j, k))) {
 						cout<<"nan in makegradient center"<<endl;
@@ -294,6 +307,11 @@ void Scalar::GradientAtCenter(Scalar& gradx, Scalar& grady, Scalar& gradz, const
 			}
 		}
 
+	}
+
+	else {
+		std::cout << "undefined scalar store type" << std::endl;
+		exit(-1);
 	}
 	return;
 }

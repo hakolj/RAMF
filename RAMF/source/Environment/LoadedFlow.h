@@ -60,6 +60,7 @@ public:
 
 	void loadFlowData(int loadstep);
 	void makeGradient();
+	void makeGradientBoundary();
 
 };
 

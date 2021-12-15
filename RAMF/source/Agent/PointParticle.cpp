@@ -203,7 +203,7 @@ void PointParticle::BoundaryCondition(std::shared_ptr<Environment> env) {
 					pos[i](dim) = 2 * this->a - pos[i](dim);
 					vp_new[i](dim) *= -1;
 				}
-				if (pos[i](dim) > L[dim] - this->a) {
+				else if (pos[i](dim) > L[dim] - this->a) {
 					pos[i](dim) = 2 * (L[dim] - this->a) - pos[i](dim);
 					vp_new[i](dim) *= -1;
 				}

@@ -57,7 +57,7 @@ int main()
 	shared_ptr<Actor> actor = ActorInitializer(configpath);
 	
 	agent->setEnv(env);
-	std::vector<Trajectory> trajs(min(int(agent->agentnum), 50));
+	std::vector<Trajectory> trajs(min(int(agent->agentnum), 10));
 	auto agentKine = dynamic_pointer_cast<GetTransRotAble>(agent); //for recording trajectories
 
 

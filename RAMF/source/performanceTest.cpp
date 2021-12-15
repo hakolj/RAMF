@@ -54,24 +54,46 @@ extern void performanceTest() {
 
 	string path = "D:\\Homework\\Y4-1\\2021-09-07-RAMF_cmake\\work\\outputgrad\\";
 	flow->reset();
-	flow->update(1.0);
-	flow->update(1.0);
-	//flow->makeGradient();
-	flow->u->FileIO(path.c_str(), "u", 'w');
-	flow->v->FileIO(path.c_str(), "v", 'w');
-	flow->w->FileIO(path.c_str(), "w", 'w');
 
-	flow->dudx.FileIO(path.c_str(), "dudx", 'w');
-	flow->dudy.FileIO(path.c_str(), "dudy", 'w');
-	flow->dudz.FileIO(path.c_str(), "dudz", 'w');
+	const Mesh* ms = &flow->u->ms;
+	for (int step = 0; step < 100; step++) {
+		ofstream os;
+		os.open(path+"prof"+to_string(step)+ ".txt", ios::out | ios::trunc);
 
-	flow->dvdx.FileIO(path.c_str(), "dvdx", 'w');
-	flow->dvdy.FileIO(path.c_str(), "dvdy", 'w');
-	flow->dvdz.FileIO(path.c_str(), "dvdz", 'w');
+		for (int j = 1; j <= flow->u->ms.Ny; j++) {
+			double sum = 0;
+			for (int k = 1; k < ms->Nz; k++) {
+				for (int i = 1; i < ms->Nx; i++) {
+					sum += flow->u->operator()(i, j, k);
+				}
 
-	flow->dwdx.FileIO(path.c_str(), "dwdx", 'w');
-	flow->dwdy.FileIO(path.c_str(), "dwdy", 'w');
-	flow->dwdz.FileIO(path.c_str(), "dwdz", 'w');
+			}
+
+			os << ms->y(j) << " " << sum/(ms->Nz-1)/(ms->Nx-1) << endl;
+		}
+
+		os.close();
+		flow->update(1);
+	}
+
+	//flow->update(1.0);
+	//flow->update(1.0);
+	////flow->makeGradient();
+	//flow->u->FileIO(path.c_str(), "u", 'w');
+	//flow->v->FileIO(path.c_str(), "v", 'w');
+	//flow->w->FileIO(path.c_str(), "w", 'w');
+
+	//flow->dudx.FileIO(path.c_str(), "dudx", 'w');
+	//flow->dudy.FileIO(path.c_str(), "dudy", 'w');
+	//flow->dudz.FileIO(path.c_str(), "dudz", 'w');
+
+	//flow->dvdx.FileIO(path.c_str(), "dvdx", 'w');
+	//flow->dvdy.FileIO(path.c_str(), "dvdy", 'w');
+	//flow->dvdz.FileIO(path.c_str(), "dvdz", 'w');
+
+	//flow->dwdx.FileIO(path.c_str(), "dwdx", 'w');
+	//flow->dwdy.FileIO(path.c_str(), "dwdy", 'w');
+	//flow->dwdz.FileIO(path.c_str(), "dwdz", 'w');
 
 
 
