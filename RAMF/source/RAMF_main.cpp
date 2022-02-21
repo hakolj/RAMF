@@ -32,7 +32,7 @@ int main()
 
 
 	bool ilearn = true;
-	omp_set_num_threads(6);
+	omp_set_num_threads(16);
 
 #pragma omp parallel
 	std::cout << "omp thread: " << omp_get_thread_num() << "\n" << endl;

@@ -235,7 +235,7 @@ void LoadedFlow::makeGradient() {
 	u->GradientAtCenter(dudx, dudy, dudz, _fieldStoreStr[0]);
 	v->GradientAtCenter(dvdx, dvdy, dvdz, _fieldStoreStr[1]);
 	w->GradientAtCenter(dwdx, dwdy, dwdz, _fieldStoreStr[2]);
-	makeGradientBoundary();
+	makeGradientBoundary(); // set gradients at boundary. Used by interpolation
 	return;
 }
 
@@ -280,7 +280,7 @@ void LoadedFlow::makeGradientBoundary() {
 		for (int k = 1; k <= Nz - 1; k++) {
 			for (int i = 1; i <= Nx - 1; i++) {
 
-				//extrapolation
+				//simple linear extrapolation
 				dudy(i, 0, k) = dudy(i, 1, k) - (dudy(i, 2, k) - dudy(i, 1, k)) / dudy.ms.hy(2) * dudy.ms.hy(1);
 				dvdy(i, 0, k) = 0.0;
 				dwdy(i, 0, k) = dwdy(i, 1, k) - (dwdy(i, 2, k) - dwdy(i, 1, k)) / dwdy.ms.hy(2) * dwdy.ms.hy(1);
