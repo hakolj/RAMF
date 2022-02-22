@@ -2,11 +2,16 @@
 #define POSITIONSENSOR_H
 
 #include "Sensor.h"
+#include "Fop.h"
 
-
-class PositionSensor :Sensor {
+class PositionSensor :public Sensor {
 public:
 	int dimension = 3;
+	
+	// dim = 1: direction = 0, 1, 2 -> pos: x, y, z;
+	// dim = 2: direction = 0, 1, 2 -> pos yz, zx, xy
+	// dim = 3: direction = 0, 1, 2 -> pos: xyz;
+	int direction = 0; 
 
 	virtual int dim() const {
 		return dimension;
@@ -14,67 +19,35 @@ public:
 
 	virtual void getState(Agent* agent, std::vector<std::vector<double>>& newstate);
 	virtual void initialize(const std::string& path, const Config& config);
+	PositionSensor() {};
 };
 
 
-PositionSensor::getState(Agent* agent, std::vector<std::vector<double>>& newstate) {
-	auto itf = dynamic_cast<GetTransRotAble*>(agent);
-	vectors3d pos = itf->getPos();
-	for (unsigned i = 0; i < agent->agentnum; i++) {
-		newstate[i][0] = pos[i][0];
-		newstate[i][1] = pos[i][1];
-
-		if (dimension == 3)	newstate[i][2] = pos[i][2];
-	}
-	return;
-}
-
-PositionSensor::initialize(const std::string& path, const Config& config) {
-	dimension = config.Read<int>("Dimension", 3);
-}
 
 
 // relative position to a target
-class RelaPositionAngleSensor :Sensor {
+class RelaPositionAngleSensor : public Sensor {
 public:
-	int dimension = 3;
 	vec3d target;
+	int dimension = 3;
+
+	// dim = 1: direction = 0, 1, 2 -> pos: x, y, z;
+	// dim = 2: direction = 0, 1, 2 -> pos yz, zx, xy
+	// dim = 3: direction = 0, 1, 2 -> pos: xyz;
+	int direction = 0;
 
 
-	RelaPositionSensor();
+	RelaPositionAngleSensor();
 	virtual int dim() const {
 		return dimension + 1; //dim in pos + 1 dim in angle
 	};
 
 	virtual void getState(Agent* agent, std::vector<std::vector<double>>& newstate);
 	virtual void initialize(const std::string& path, const Config& config);
+	void reset(std::shared_ptr<Task> task) override;
+
 };
 
-RelaPositionAngleSensor::RelaPositionSensor() :target{ vec3d::Zero() } {};
 
-void RelaPositionAngleSensor::getState(Agent* agent, std::vector<std::vector<double>>& newstate) {
-	auto itf = dynamic_cast<GetTransRotAble*>(agent);
-	vectors3d pos = itf->getPos();
-	vectors3d p3 = itf->getP3();
-	for (unsigned i = 0; i < agent->agentnum; i++) {
-		newstate[i][0] = pos[i][0] - target[0];
-		newstate[i][1] = pos[i][1] - target[1];
-
-		if (dimension == 3)	newstate[i][2] = pos[i][2] - target[2];
-
-		newstate[i][dimension + 1] = atan2(p3[1], p3[0]); // angle
-	}
-	return;
-}
-
-void RelaPositionAngleSensor::initialize(const std::string& path, const Config& config) {
-	dimension = config.Read<int>("Dimension", 3);
-}
-
-
-
-void PositionSensor::reset(std::shared_ptr<Task> task) {
-	target = std::dynamic_pointer_cast<GetTargetable>(task)->getTarget();
-}
 
 #endif

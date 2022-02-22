@@ -32,6 +32,7 @@ class ChangeSwimVelAble {
 public:
 	virtual void setSwimVel(const std::vector<double>& newvswim) = 0;
 	virtual vectors3d& swimAngVel() = 0;
+	virtual std::vector<double>& swimVel() = 0;
 };
 
 class ChangeJumpVelAble {

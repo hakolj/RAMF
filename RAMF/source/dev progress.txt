@@ -4,3 +4,8 @@ Q-learningÏà¹Ø£º½«¶Ô×´Ì¬µÄÀëÉ¢¹¦ÄÜÇ¨ÒÆµ½Q-learningÖÐ¡£Ê¹memory poolÖÐ´æ·ÅµÄ×´Ì¬Î
 Êý¾Ý½á¹¹£º¶þÎ¬Êý×éthreshold£¬¶¨ÒåÁËÃ¿Ò»¸ö×´Ì¬Î¬¶ÈµÄ·ÖÇøãÐÖµ£¬Èçthreshold[i][j]ÎªµÚi¸ö×´Ì¬Î¬¶ÈµÄµÚj¸öÇø¼ä±ß½ç¡£threshold[i].size() = levelsÊýÁ¿-1¡£
 
 Á¬ÐøÁ÷³¡Ïà¹Ø£º²âÊÔlinux±àÒë£¬¿¼ÂÇÊÇ·ñÐèÒªÊµÏÖÈ«²¿¶Á½øÀ´ÔÙÑµÁ·¡£
+
+2022-2-22£º
+¿ª·¢¼Æ»®£º
+¿ª·¢¸Ä±äÓÎ¶¯ËÙ¶ÈµÄactor
+¿ª·¢µ÷½Ú¿ÅÁ£Àë±ÚÃæ¾àÀëµÄÏà¹Ø¹¦ÄÜ

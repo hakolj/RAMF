@@ -2,6 +2,7 @@
 #include "Task.h"
 #include "NavigationPoint.h"
 #include "NavigationUpward.h"
+#include "DistanceFromBoundary.h"
 
 using namespace std;
 shared_ptr<Task> TaskInitializer(const std::string& path) {
@@ -14,6 +15,9 @@ shared_ptr<Task> TaskInitializer(const std::string& path) {
 	}
 	else if (taskname == "NavigationUpward") {
 		ptask = make_shared<NavigationUpward>();
+	}
+	else if (taskname == "DistanceFromBoundary") {
+		ptask = make_shared<DistanceFromBoundary>();
 	}
 	else if (taskname == "_EMPTY") {
 		cout << "Task type is not defined. Check config file." << endl;

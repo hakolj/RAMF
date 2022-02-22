@@ -49,12 +49,13 @@ int main()
 #else
 	std::string configpath = "D:/Homework/Y4-1/2021-09-07-RAMF_cmake/work/config.txt";	
 #endif
-	SimuManager smanager = SimuManager(configpath);
+	
 	shared_ptr<Environment> env = EnvInitializer(configpath);
 	shared_ptr<Agent> agent = AgentInitializer(configpath);
 	shared_ptr<Task> task = TaskInitializer(configpath);
 	shared_ptr<Sensor> sensor = SensorInitializer(configpath);
 	shared_ptr<Actor> actor = ActorInitializer(configpath);
+	SimuManager smanager = SimuManager(configpath, env, agent, task, actor, sensor);
 	
 	agent->setEnv(env);
 	std::vector<Trajectory> trajs(min(int(agent->agentnum), 10));
@@ -139,7 +140,7 @@ int main()
 
 			if ((i + 1) % smanager.sensestep == 0) {
 				sensor->getState(agent.get(), state_new);
-				task->getReward(agent.get(), reward);
+				task->getReward(smanager, reward);
 				mem.storeMemory(agent->agentnum, state, action, reward, state_new, isterminated);
 				//state = state_new;
 				state.swap(state_new);
@@ -167,7 +168,7 @@ int main()
 		}
 
 		//end episode
-		vector<double> totalreward = task->getTotalReward(agent.get());
+		vector<double> totalreward = task->getTotalReward(smanager);
 		double meantotalreward = 0;
 		for (double trwd : totalreward) {
 			meantotalreward += trwd;

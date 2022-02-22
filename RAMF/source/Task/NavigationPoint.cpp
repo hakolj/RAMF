@@ -22,11 +22,14 @@ void NavigationPoint::initialize(const std::string& path, const Config& config) 
 	return;
 }
 
-void NavigationPoint::getReward(const Agent* const agent, std::vector<double>& reward) {
-	auto itf = dynamic_cast<const GetTransRotAble*>(agent);
+void NavigationPoint::getReward(const SimuManager& simuManager, std::vector<double>& reward) {
+	//auto itf = dynamic_cast<const GetTransRotAble*>(agent);
+	auto itf = dynamic_pointer_cast<const GetTransRotAble>(simuManager.agent);
+	
+	
 	//auto itf = dynamic_pointer_cast<GetTransRotAble>(agent);
 	vectors3d pos(itf->getPos());
-	for (unsigned i = 0; i < agent->agentnum; i++) {
+	for (unsigned i = 0; i < simuManager.agent->agentnum; i++) {
 		double r = (target - pos[i]).squaredNorm();
 		if (r > bonusrange * bonusrange) {
 			reward[i] = panelty * r;
@@ -40,7 +43,7 @@ void NavigationPoint::getReward(const Agent* const agent, std::vector<double>& r
 	return;
 }
 
-std::vector<double> NavigationPoint::getTotalReward(const Agent* agent) {
+std::vector<double> NavigationPoint::getTotalReward(const SimuManager& simuManager) {
 	return _recorder;
 }
 

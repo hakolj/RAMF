@@ -4,10 +4,15 @@
 #include "Fop.h"
 
 using namespace std;
-SimuManager::SimuManager(const std::string& configpath) :episode_record(std::vector<int>(0)),
-reward_record(std::vector<double>(0)),
-loss_record(std::vector<double>(0)),
-qvalue_record(std::vector<double>(0)){
+SimuManager::SimuManager(const std::string& configpath,
+	std::shared_ptr<Environment> env,
+	std::shared_ptr<Agent> agent,
+	std::shared_ptr<Task> task,
+	std::shared_ptr<Actor> actor,
+	std::shared_ptr<Sensor> sensor) :episode_record(std::vector<int>(0)),
+	reward_record(std::vector<double>(0)),
+	loss_record(std::vector<double>(0)),
+	qvalue_record(std::vector<double>(0)){
 	Config config(configpath, "OVERALL");
 	workingDir = config.Read<string>("workingDir", "./traj/");
 	Fop::makeDir(workingDir);
@@ -27,6 +32,14 @@ qvalue_record(std::vector<double>(0)){
 	saveinterval = config.Read<int>("save interval"); //episode interval of saving training
 	ilearn = config.Read<bool>("ilearn");
 	iload = config.Read<bool>("iload");
+
+	this->env = env;
+	this->agent = agent;
+	this->task = task;
+	this->actor = actor;
+	this->sensor = sensor;
+
+
 	return;
 }
 

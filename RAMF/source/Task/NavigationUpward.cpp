@@ -13,18 +13,19 @@ void NavigationUpward::reset(const Agent* agent) {
 	}
 }
 
-std::vector<double> NavigationUpward::getTotalReward(const Agent* agent) {
-	auto itf = dynamic_cast<const GetTransRotAble*>(agent);
-	std::vector<double> ttrw(agent->agentnum, 0.0);
-	for (unsigned i = 0; i < agent->agentnum; i++) {
+std::vector<double> NavigationUpward::getTotalReward(const SimuManager& simuManager) {
+	auto itf = std::dynamic_pointer_cast<const GetTransRotAble>(simuManager.agent);
+	std::vector<double> ttrw(simuManager.agent->agentnum, 0.0);
+	for (unsigned i = 0; i < simuManager.agent->agentnum; i++) {
 		ttrw[i] = itf->getPos()[i][1] - _recorder[i];
 	}
 	return ttrw;
 }
 
-void NavigationUpward::getReward(const Agent* const agent, std::vector<double>& reward) {
-	auto itf = dynamic_cast<const GetTransRotAble*>(agent);
-	for (unsigned i = 0; i < agent->agentnum; i++) {
+void NavigationUpward::getReward(const SimuManager& simuManager, std::vector<double>& reward) {
+	//auto itf = dynamic_cast<const GetTransRotAble*>(agent);
+	auto itf = std::dynamic_pointer_cast<const GetTransRotAble>(simuManager.agent);
+	for (unsigned i = 0; i < simuManager.agent->agentnum; i++) {
 		double currenty = itf->getPos()[i][1];
 		reward[i] = currenty - _cache[i];
 		//reward[i] /= 0.0005;

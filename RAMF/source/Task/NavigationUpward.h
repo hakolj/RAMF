@@ -20,8 +20,8 @@ public:
 	void initialize(const std::string& path, const Config& config);
 
 
-	void getReward(const Agent* agent, std::vector<double>& reward);
-	std::vector<double> getTotalReward(const Agent* agent);
+	void getReward(const SimuManager& simuManager, std::vector<double>& reward);
+	std::vector<double> getTotalReward(const SimuManager& simuManager);
 	void reset(const Agent* agent);
 };
 

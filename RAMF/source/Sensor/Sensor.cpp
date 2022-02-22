@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Sensor.h"
 #include "SensorsImpl.h"
+#include "PositionSensor.h"
 using namespace std;
 shared_ptr<Sensor> SensorInitializer(std::string path) {
 	//read config
@@ -26,6 +27,12 @@ shared_ptr<Sensor> SensorInitializer(std::string path) {
 	}
 	else if (sensorname == "RelaVelocityD") {
 		psensor = make_shared<RelaVelSensorDiscret>();
+	}
+	else if (sensorname == "Position") {		
+		psensor = make_shared<PositionSensor>();
+	}
+	else if (sensorname == "RelaPositionAngle") {
+		psensor = make_shared<RelaPositionAngleSensor>();
 	}
 	
 	else if (sensorname == "_EMPTY") {

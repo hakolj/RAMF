@@ -66,6 +66,7 @@ public:
 	inline vectors3d getMassCenter() const { return mdisp; }
 	inline void setSwimVel(const std::vector<double>& newvswim) { vswim = newvswim; }
 	inline vectors3d& swimAngVel() { return _swimAngVel; }
+	inline std::vector<double>& swimVel() { return vswim; }
 	inline virtual std::vector<double>& jumpTime() { return tjump_now; };
 
 public:

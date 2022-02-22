@@ -3,6 +3,7 @@
 #include "MassCenterAndVswim.h"
 #include "ExtraAngVel.h"
 #include "Jumping.h"
+#include "VswimActor.h"
 
 using namespace std;
 shared_ptr<Actor> ActorInitializer(const std::string& path) {
@@ -21,6 +22,9 @@ shared_ptr<Actor> ActorInitializer(const std::string& path) {
 	}
 	else if (actorname == "Jumping") {
 		pactor = make_shared<Jumping>();
+	}
+	else if (actorname == "Vswim") {
+		pactor = make_shared<VswimActor>();
 	}
 	else if (actorname == "_EMPTY") {
 		cout << "Actor type is not defined. Check config file." << endl;

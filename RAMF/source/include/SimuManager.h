@@ -8,7 +8,20 @@
 #include <string>
 #include <iomanip>
 #include "AgentInterface.h"
-using std::endl;
+//#include "Agent.h"
+//#include "Environment.h"
+//#include "Task.h"
+//#include "Actor.h"
+//#include "Sensor.h"
+//using std::endl;
+
+class Environment;
+class Agent;
+class Task;
+class Actor;
+class Sensor;
+
+
 class SimuManager
 {
 public:
@@ -18,13 +31,24 @@ public:
 	std::vector<double> qvalue_record;
 	std::string workingDir;
 
+	std::shared_ptr<Environment> env;
+	std::shared_ptr<Agent> agent;
+	std::shared_ptr<Task> task;
+	std::shared_ptr<Actor> actor;
+	std::shared_ptr<Sensor> sensor;
+
 	//SimuManager():episode_record(std::vector<int>(0)),
 	//	reward_record(std::vector<double>(0)),
 	//	loss_record(std::vector<double>(0)),
 	//	qvalue_record(std::vector<double>(0)) {}
 	SimuManager() = delete;
 
-	SimuManager(const std::string& configpath);
+	SimuManager(const std::string& configpath, 
+		std::shared_ptr<Environment> env,
+		std::shared_ptr<Agent> agent,
+		std::shared_ptr<Task> task,
+		std::shared_ptr<Actor> actor,
+		std::shared_ptr<Sensor> sensor);
 
 	void recording(int episode, double reward, double loss, double qvalue);
 	void writeRecord(const std::string& path);
@@ -80,11 +104,11 @@ public:
 	void writeTraj(std::string dir) {
 		std::ofstream outfile;
 		outfile.open(dir);
-		outfile << "xpos\t" << "ypos\t" << "zpos\t" << "p31\t" << "p32\t" << "p33\t" << endl;
+		outfile << "xpos\t" << "ypos\t" << "zpos\t" << "p31\t" << "p32\t" << "p33\t" << std::endl;
 		outfile << std::showpoint << std::setprecision(8) << std::left;
 		for (unsigned i = 0; i < pos.size(); i++) {
 			outfile << std::setw(16) << pos[i][0] << "\t" << pos[i][1] << "\t" << pos[i][2] << "\t"
-				<< p3[i][0] << "\t" << p3[i][1] << "\t" << p3[i][2] << "\t" << endl;
+				<< p3[i][0] << "\t" << p3[i][1] << "\t" << p3[i][2] << "\t" << std::endl;
 		}
 		outfile.close();
 	}
