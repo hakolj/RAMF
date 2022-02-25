@@ -122,7 +122,7 @@ public:
   // FIXME to be consitent with the rest this could be implemented as a static Through function ??
   EIGEN_DEVICE_FUNC explicit Hyperplane(const ParametrizedLine<Scalar, AmbientDimAtCompileTime>& parametrized)
   {
-    normal() = parametrized.direction().unitOrthogonal();
+    normal() = parametrized._direction().unitOrthogonal();
     offset() = -parametrized.origin().dot(normal());
   }
 

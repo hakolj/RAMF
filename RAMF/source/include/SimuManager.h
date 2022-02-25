@@ -68,6 +68,7 @@ public:
 	int saveinterval; //episode interval of saving training
 	bool ilearn;
 	bool iload;
+	bool inaive;  // naive actor will always give the same action
 
 };
 

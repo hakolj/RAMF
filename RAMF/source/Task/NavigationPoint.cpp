@@ -47,7 +47,7 @@ std::vector<double> NavigationPoint::getTotalReward(const SimuManager& simuManag
 	return _recorder;
 }
 
-void NavigationPoint::reset(const Agent* agent) {
-	_recorder = std::vector<double>(agent->agentnum, 0.0);
+void NavigationPoint::reset(const SimuManager& simuManager) {
+	_recorder = std::vector<double>(simuManager.agent->agentnum, 0.0);
 	//_reward = std::vector<double>(agent->agentnum,0.0);
 }

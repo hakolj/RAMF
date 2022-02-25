@@ -15,13 +15,18 @@ void VswimActor::initialize(const std::string& path, const Config& config){
 
 }
 
-void VswimActor::takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action) {
+void VswimActor::takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action, bool inaive) {
 	auto itfvswim = dynamic_pointer_cast<ChangeSwimVelAble>(ag);
 	//std::vector<double> newvswim(ag->agentnum, 0.0);
-	double newvswim;
-	for (unsigned i = 0; i < ag->agentnum; i++) {
-		newvswim = maxVswim * vswimRatio[action[i]];
-		itfvswim->swimVel()[i] = newvswim;
+	if (inaive) {
+		for (unsigned i = 0; i < ag->agentnum; i++) {
+			itfvswim->swimVel()[i] = maxVswim;
+		}
 	}
-	//itfvswim->setSwimVel(newvswim);
+	else {
+		for (unsigned i = 0; i < ag->agentnum; i++) {
+			itfvswim->swimVel()[i] = maxVswim * vswimRatio[action[i]];;
+		}
+	}
+
 }

@@ -36,6 +36,10 @@ public:
 	// dim = 3: direction = 0, 1, 2 -> pos: xyz;
 	int direction = 0;
 
+private:
+	bool isExternalTarget = false; // to decide whether target is from external task definition
+	vec3d _selftarget;
+public:
 
 	RelaPositionAngleSensor();
 	virtual int dim() const {

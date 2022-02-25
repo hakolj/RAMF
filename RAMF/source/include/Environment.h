@@ -19,7 +19,7 @@ public:
 
 	//return the boundary type in XYZ. 
 	//Example: PPP = periodic boundaries in 3 dirs. PWP = periodic boundaries in x and z, wall boundary in y
-	//PPN: piriodic in x and y. No z direction (2D cases). 
+	//PPN: piriodic in x and y. No z _direction (2D cases). 
 	virtual std::string boundaryType() = 0;
 	virtual void getDomainSize(double& Lx, double& Ly, double& Lz) = 0;
 	virtual ~Environment() {}

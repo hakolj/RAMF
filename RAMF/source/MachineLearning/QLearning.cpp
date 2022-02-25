@@ -86,7 +86,7 @@ void QLearning::initialize(const std::string& path, const Config& config) {
 	cout << "initializing" << endl;
 	for (int i = 0; i < numState; i++) {
 		for (double& q : qtable[i]) {
-			q = 1000.0;
+			q = 500.0;
 		}
 	}
 }
@@ -164,8 +164,8 @@ int QLearning::toIndex(const std::vector<double>& state) {
 std::vector<double> QLearning::toState(int index) {
 	std::vector<double> state(dimState);
 	for (int i = 0; i < dimState; i++) {
-		state[i] = index % levels[i];
-		index = (index - state[i]) / levels[i];
+		state[i] = index % (threshold[i].size() + 1);
+		index = (index - state[i]) / (threshold[i].size() + 1);
 	}
 	return state;
 }

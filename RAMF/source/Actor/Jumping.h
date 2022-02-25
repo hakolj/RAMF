@@ -6,7 +6,7 @@
 class Jumping : public Actor {
 public:
 	Jumping();
-	virtual void takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action);
+	virtual void takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action, bool inaive);
 	virtual void initialize(const std::string& path, const Config& config);
 	inline virtual int num() const { return 2; }
 };

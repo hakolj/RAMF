@@ -20,7 +20,7 @@ namespace Eigen {
   * \brief A parametrized line
   *
   * A parametrized line is defined by an origin point \f$ \mathbf{o} \f$ and a unit
-  * direction vector \f$ \mathbf{d} \f$ such that the line corresponds to
+  * _direction vector \f$ \mathbf{d} \f$ such that the line corresponds to
   * the set \f$ l(t) = \mathbf{o} + t \mathbf{d} \f$, \f$ t \in \mathbf{R} \f$.
   *
   * \tparam _Scalar the scalar type, i.e., the type of the coefficients
@@ -45,18 +45,18 @@ public:
   
   template<int OtherOptions>
   EIGEN_DEVICE_FUNC ParametrizedLine(const ParametrizedLine<Scalar,AmbientDimAtCompileTime,OtherOptions>& other)
-   : m_origin(other.origin()), m_direction(other.direction())
+   : m_origin(other.origin()), m_direction(other._direction())
   {}
 
   /** Constructs a dynamic-size line with \a _dim the dimension
     * of the ambient space */
   EIGEN_DEVICE_FUNC inline explicit ParametrizedLine(Index _dim) : m_origin(_dim), m_direction(_dim) {}
 
-  /** Initializes a parametrized line of direction \a direction and origin \a origin.
-    * \warning the vector direction is assumed to be normalized.
+  /** Initializes a parametrized line of _direction \a _direction and origin \a origin.
+    * \warning the vector _direction is assumed to be normalized.
     */
-  EIGEN_DEVICE_FUNC ParametrizedLine(const VectorType& origin, const VectorType& direction)
-    : m_origin(origin), m_direction(direction) {}
+  EIGEN_DEVICE_FUNC ParametrizedLine(const VectorType& origin, const VectorType& _direction)
+    : m_origin(origin), m_direction(_direction) {}
 
   template <int OtherOptions>
   EIGEN_DEVICE_FUNC explicit ParametrizedLine(const Hyperplane<_Scalar, _AmbientDim, OtherOptions>& hyperplane);
@@ -73,8 +73,8 @@ public:
   EIGEN_DEVICE_FUNC const VectorType& origin() const { return m_origin; }
   EIGEN_DEVICE_FUNC VectorType& origin() { return m_origin; }
 
-  EIGEN_DEVICE_FUNC const VectorType& direction() const { return m_direction; }
-  EIGEN_DEVICE_FUNC VectorType& direction() { return m_direction; }
+  EIGEN_DEVICE_FUNC const VectorType& _direction() const { return m_direction; }
+  EIGEN_DEVICE_FUNC VectorType& _direction() { return m_direction; }
 
   /** \returns the squared distance of a point \a p to its projection onto the line \c *this.
     * \sa distance()
@@ -82,7 +82,7 @@ public:
   EIGEN_DEVICE_FUNC RealScalar squaredDistance(const VectorType& p) const
   {
     VectorType diff = p - origin();
-    return (diff - direction().dot(diff) * direction()).squaredNorm();
+    return (diff - _direction().dot(diff) * _direction()).squaredNorm();
   }
   /** \returns the distance of a point \a p to its projection onto the line \c *this.
     * \sa squaredDistance()
@@ -91,7 +91,7 @@ public:
 
   /** \returns the projection of a point \a p onto the line \c *this. */
   EIGEN_DEVICE_FUNC VectorType projection(const VectorType& p) const
-  { return origin() + direction().dot(p-origin()) * direction(); }
+  { return origin() + _direction().dot(p-origin()) * _direction(); }
 
   EIGEN_DEVICE_FUNC VectorType pointAt(const Scalar& t) const;
   
@@ -122,7 +122,7 @@ public:
   EIGEN_DEVICE_FUNC inline explicit ParametrizedLine(const ParametrizedLine<OtherScalarType,AmbientDimAtCompileTime,OtherOptions>& other)
   {
     m_origin = other.origin().template cast<Scalar>();
-    m_direction = other.direction().template cast<Scalar>();
+    m_direction = other._direction().template cast<Scalar>();
   }
 
   /** \returns \c true if \c *this is approximately equal to \a other, within the precision
@@ -146,7 +146,7 @@ template <int OtherOptions>
 EIGEN_DEVICE_FUNC inline ParametrizedLine<_Scalar, _AmbientDim,_Options>::ParametrizedLine(const Hyperplane<_Scalar, _AmbientDim,OtherOptions>& hyperplane)
 {
   EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(VectorType, 2)
-  direction() = hyperplane.normal().unitOrthogonal();
+  _direction() = hyperplane.normal().unitOrthogonal();
   origin() = -hyperplane.normal()*hyperplane.offset();
 }
 
@@ -156,7 +156,7 @@ template <typename _Scalar, int _AmbientDim, int _Options>
 EIGEN_DEVICE_FUNC inline typename ParametrizedLine<_Scalar, _AmbientDim,_Options>::VectorType
 ParametrizedLine<_Scalar, _AmbientDim,_Options>::pointAt(const _Scalar& t) const
 {
-  return origin() + (direction()*t); 
+  return origin() + (_direction()*t); 
 }
 
 /** \returns the parameter value of the intersection between \c *this and the given \a hyperplane
@@ -166,7 +166,7 @@ template <int OtherOptions>
 EIGEN_DEVICE_FUNC inline _Scalar ParametrizedLine<_Scalar, _AmbientDim,_Options>::intersectionParameter(const Hyperplane<_Scalar, _AmbientDim, OtherOptions>& hyperplane) const
 {
   return -(hyperplane.offset()+hyperplane.normal().dot(origin()))
-          / hyperplane.normal().dot(direction());
+          / hyperplane.normal().dot(_direction());
 }
 
 

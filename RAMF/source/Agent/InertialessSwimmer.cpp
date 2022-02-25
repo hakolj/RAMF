@@ -36,23 +36,53 @@ void InertialessSwimmer::initialize(const std::string& path, const Config& confi
 	setDim(dim);
 	double initRange = config.Read("initRange", 2.0);
 	setInitRange(initRange);
+
+
+	_resetEpisode = config.Read<int>("reset episode", 0);
+	_resetCount = _resetEpisode; // to ensure always reset for the first episode
 	return;
 }
 
 void InertialessSwimmer::reset() {
+	_resetCount++;
+	bool resetflag = _resetCount >= _resetEpisode;
+
+
 	if (_dimension == 2) {
-		initOrient2D();
-		initPos2D(envDomain[0], envDomain[1]);
+
+		if (resetflag) {
+			_resetCount = 0;
+			initOrient2D();
+			initPos2D(envDomain[0], envDomain[1]);
+		}
+		else {
+			for (unsigned i = 0; i < agentnum; i++) {
+				pos[i][0] = fmod(pos[i][0], envDomain[0]);
+				pos[i][1] = fmod(pos[i][1], envDomain[1]);
+			}
+		}
 		//initPos2D(_initRange, _initRange);
 		//initPos2DPoint(1.0, 1.0, 2.00);
 
 	}
 	else if (_dimension == 3) {
-		initOrient3D();
+
 		//initPos3D(2 * M_PI, 2 * M_PI, 2 * M_PI);
 		//initPos3D(2  , 2 , 2 );
-		initPos3D(envDomain[0], envDomain[1], envDomain[2]);
+		if (resetflag) {
+			_resetCount = 0;
+			initOrient3D();
+			initPos3D(envDomain[0], envDomain[1], envDomain[2]);
+		}
+		else {
+			for (unsigned i = 0; i < agentnum; i++) {
+				pos[i][0] = fmod(pos[i][0], envDomain[0]);
+				pos[i][1] = fmod(pos[i][1], envDomain[1]);
+				pos[i][2] = fmod(pos[i][2], envDomain[2]);
+			}
+		}
 	}
+
 	resetFlowInfo();
 	return;
 }

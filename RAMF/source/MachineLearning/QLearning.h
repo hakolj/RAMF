@@ -47,6 +47,7 @@ private:
 	int toIndex(const std::vector<double>& state);
 	std::vector<double> toState(int index);
 
+
 private:
 	std::vector<std::vector<double>> deltaq;
 };

@@ -10,7 +10,7 @@ void MassCenterAndVswim::initialize(const std::string& path, const Config& confi
 	maxVswim = config.Read<double>("maxVswim");
 	return;
 }
-void MassCenterAndVswim::takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action) {
+void MassCenterAndVswim::takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action, bool inaive) {
 	//ChangeMassCenterAble* itf = dynamic_cast<ChangeMassCenterAble*>(ag);
 	//ChangeSwimVelAble* itfvswim = dynamic_cast<ChangeSwimVelAble*>(ag);
 
@@ -22,31 +22,24 @@ void MassCenterAndVswim::takeAction(std::shared_ptr<Agent> ag, const std::vector
 	const std::array<double, 8> arrd1{ 1, 0, -1, 0,	1, 0, -1, 0 };
 	const std::array<double, 8> arrd3{ 0, 1, 0, -1, 0, 1, 0, -1 };
 	const double vswimratio[8] = { 0,0,0,0,1,1,1,1 };
-	//const std::array<double,18> arrd1{ -1, 0, 1, -1, 0, 1, -1, 0, 1,-1, 0, 1, -1, 0, 1, -1, 0, 1 };
-	//const std::array<double,18> arrd3{ -1, -1, -1,0, 0, 0, 1, 1, 1, -1, -1, -1, 0, 0, 0, 1, 1, 1 };
-	//const double vswimratio[18] = { 0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1 };
-	//for (unsigned i = 0; i < ag->agentnum; i++) {
-	//	currentmc[i][0] += arrd1[action[i]];
-	//	currentmc[i][2] += arrd3[action[i]];
-	//	currentmc[i][0] = std::min(currentmc[i][0], maxd1);
-	//	currentmc[i][0] = std::max(currentmc[i][0], mind1);
-	//	currentmc[i][2] = std::min(currentmc[i][2], maxd3);
-	//	currentmc[i][2] = std::max(currentmc[i][2], mind3);
-	//	newvswim[i] = maxVswim * vswimratio[action[i]];
-	//	//if (action[i] == 18) {
-	//	//	std::cout << arrd1[action[i]] << endl;
-	//	//}
-	//}
 
-	for (unsigned i = 0; i < ag->agentnum; i++) {
-		currentmc[i][0] = arrd1[action[i]];
-		currentmc[i][2] = arrd3[action[i]];
-
-		newvswim[i] = maxVswim * vswimratio[action[i]];
-
-		itf->setMassCenter(currentmc);
-		itfvswim->setSwimVel(newvswim);
-
-		//itf->setMassCenter();
+	if (inaive) {
+		for (unsigned i = 0; i < ag->agentnum; i++) {
+			currentmc[i][0] = 0.0;
+			currentmc[i][2] = 0.0;
+			newvswim[i] = maxVswim;
+		}
 	}
+	else {
+		for (unsigned i = 0; i < ag->agentnum; i++) {
+			currentmc[i][0] = arrd1[action[i]];
+			currentmc[i][2] = arrd3[action[i]];
+
+			newvswim[i] = maxVswim * vswimratio[action[i]];
+			//itf->setMassCenter();
+		}
+	}
+
+	itf->setMassCenter(currentmc);
+	itfvswim->setSwimVel(newvswim);
 }

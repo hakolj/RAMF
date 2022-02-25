@@ -8,7 +8,7 @@
 #include "Config.h"
 class Actor {
 public:
-	virtual void takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action) = 0;
+	virtual void takeAction(std::shared_ptr<Agent> ag, const std::vector<int>& action, bool inaive) = 0;
 	virtual void initialize(const std::string& path, const Config& config) = 0;
 	virtual int num() const = 0;
 };

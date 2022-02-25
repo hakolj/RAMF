@@ -28,6 +28,8 @@ protected:
 	int _dimension; //2d or 3d
 	std::shared_ptr<InfoAtPointAble> envInfoAtPoint;
 	double envDomain[3] = { 0,0,0 }; // boundary range of env
+	int _resetEpisode; // particles pos and orientation are reset at every N episode
+	int _resetCount = 0;
 
 public:
 	PointParticle(unsigned agentnum);

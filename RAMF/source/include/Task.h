@@ -15,7 +15,7 @@ public:
 	//virtual void getReward(const Agent* const agent, std::vector<double>& reward) = 0;
 	virtual std::vector<double> getTotalReward(const SimuManager& simuManager) = 0;
 	virtual void initialize(const std::string& path, const Config& config) = 0;
-	virtual void reset(const Agent* agent) = 0;
+	virtual void reset(const SimuManager& simuManager) = 0;
 };
 
 extern std::shared_ptr<Task> TaskInitializer(const std::string& path);

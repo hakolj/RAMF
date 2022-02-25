@@ -26,7 +26,7 @@ public:
 
 	void getReward(const SimuManager& simuManager, std::vector<double>& reward);
 	std::vector<double> getTotalReward(const SimuManager& simuManager);
-	void reset(const Agent* agent);
+	void reset(const SimuManager& simuManager);
 
 	virtual vec3d getTarget() { return target; };
 

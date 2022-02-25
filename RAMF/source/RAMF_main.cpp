@@ -31,8 +31,8 @@ int main()
 	}
 
 
-	bool ilearn = true;
-	omp_set_num_threads(16);
+	//bool ilearn = true;
+	omp_set_num_threads(4);
 
 #pragma omp parallel
 	std::cout << "omp thread: " << omp_get_thread_num() << "\n" << endl;
@@ -112,7 +112,7 @@ int main()
 		agent->reset();
 		agent->getInfo();
 		agent->useInfo();//ag.convertFrame();
-		task->reset(agent.get());
+		task->reset(smanager);
 		sensor->reset(task);
 		sensor->getState(agent.get(), state); //initial state
 
@@ -128,7 +128,7 @@ int main()
 				//for (int j = 0; j < action.size(); j++) {
 				//	action[j] = 1;
 				//}
-				actor->takeAction(agent, action);
+				actor->takeAction(agent, action, smanager.inaive);
 			}
 
 			agent->update(smanager.timestepsize);
@@ -145,7 +145,7 @@ int main()
 				//state = state_new;
 				state.swap(state_new);
 				statestep++;
-				if (ilearn) {
+				if (smanager.ilearn) {
 					if ((statestep % smanager.learnstep == 0) || (i == smanager.totalstep)) {
 						ml->train(&mem);
 					}
@@ -173,7 +173,7 @@ int main()
 		for (double trwd : totalreward) {
 			meantotalreward += trwd;
 		}
-		meantotalreward /= (smanager.totalstep * smanager.timestepsize);
+		//meantotalreward /= (smanager.totalstep * smanager.timestepsize);
 		meantotalreward /= agent->agentnum;
 
 
@@ -186,7 +186,7 @@ int main()
 		smanager.recording(episode, meantotalreward, 0, 0);
 
 		if ((episode % smanager.saveinterval == 0) || (episode == smanager.episodenum + startepisode - 1)) {
-			if (ilearn) {
+			if (smanager.ilearn) {
 				mem.writeMemory(smanager.workingDir);
 				ml->model_saver(smanager.workingDir);
 				smanager.writeRecord(smanager.workingDir);

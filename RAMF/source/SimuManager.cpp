@@ -32,6 +32,7 @@ SimuManager::SimuManager(const std::string& configpath,
 	saveinterval = config.Read<int>("save interval"); //episode interval of saving training
 	ilearn = config.Read<bool>("ilearn");
 	iload = config.Read<bool>("iload");
+	inaive = config.Read<bool>("inaive", false);
 
 	this->env = env;
 	this->agent = agent;
